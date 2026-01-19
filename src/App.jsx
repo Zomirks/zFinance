@@ -1,33 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react';
+import { formatCurrency, formatDate } from './utils/formatters';
 import './App.css'
 
 function App() {
-	const [count, setCount] = useState(0)
+	const transactions = [
+		{ id: 1, amount: 2500, type: 'income', category: 'Salaire', date: '2024-01-01' },
+		{ id: 2, amount: -800, type: 'expense', category: 'Loyer', date: '2024-01-02' },
+		{ id: 3, amount: -150, type: 'expense', category: 'Courses', date: '2024-01-05' },
+	];
 
 	return (
 		<>
-			<div>
-				<a href="https://vite.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.jsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">
-				Click on the Vite and React logos to learn more
-			</p>
+			<h1 className="font-bold text-2xl mb-3">zFinance</h1>
+
+			<h3 className="font-semibold">Transactions</h3>
+			{transactions.map((t) => (
+				<li key={t.id}>
+					<strong>{t.category}</strong> : {formatCurrency(t.amount)} ({t.type}) - {formatDate(t.date, '', {
+						weekday: "long",
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+					})}
+				</li>
+			))}
 		</>
 	)
 }
