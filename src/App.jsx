@@ -1,8 +1,14 @@
+import { useState } from 'react';
 import { formatCurrency, formatDate } from './utils/formatters';
 import Badge from './components/ui/Badge';
+import Button from './components/ui/Button';
 import Card from './components/ui/Card';
 
 function App() {
+	function handleClick(e) {
+
+	}
+
 	const transactions = [
 		{ id: 1, amount: 2500, type: 'income', category: 'Salaire', date: '2024-01-01' },
 		{ id: 2, amount: -800, type: 'expense', category: 'Loyer', date: '2024-01-02' },
@@ -65,6 +71,12 @@ function App() {
 						))}
 					</ul>
 				</Card>
+
+				<div className="flex justify-center">
+					<Button variant="primary" size="lg" onClick={handleClick}>
+						Ajouter
+					</Button>
+				</div>
 			</main>
 		</div>
 	);
