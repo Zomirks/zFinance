@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
-import { formatCurrency, formatDate } from './utils/formatters';
+import { formatCurrency } from './utils/formatters';
 import Button from './components/ui/Button';
 import Card from './components/ui/Card';
-import TransactionItem from './components/features/TransactionItem';
+import TransactionList from './components/features/TransactionList';
 import Header from './components/layout/Header';
 
 function App() {
@@ -44,11 +43,7 @@ function App() {
 				</Card>
 
 				<Card title="Transactions récentes">
-					<ul className="divide-y divide-slate-100 dark:divide-slate-700">
-						{mockTransactions.map((t) => (
-							<TransactionItem id={t.id} amount={t.amount} description={t.description} category={t.category} date={t.date} status={t.status} />
-						))}
-					</ul>
+					<TransactionList transactions={mockTransactions} />
 				</Card>
 
 				<div className="flex justify-center">
