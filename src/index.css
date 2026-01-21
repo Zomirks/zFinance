@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
 	/* Brand Primary - Emerald */
 	--color-brand-50: #ecfdf5;

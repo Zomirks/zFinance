@@ -7,12 +7,12 @@ const Button = ({
 	type = 'button',
 	className = '',
 }) => {
-	const baseStyles = 'font-medium rounded-lg ring-1 ring-inset  transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+	const baseStyles = 'font-medium rounded-lg ring-1 ring-inset transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900';
 	
 	const variants = {
-		primary: 'bg-emerald-100 text-emerald-700 ring-emerald-600/20 hover:bg-emerald-200 focus:ring-emerald-500',
-		secondary: 'bg-slate-100 text-slate-700 ring-slate-600/20 hover:bg-slate-200 focus:ring-slate-500',
-		danger: 'bg-red-100 text-red-700 ring-red-600/20 hover:bg-red-200 focus:ring-red-500',
+		primary: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 ring-emerald-600/20 dark:ring-emerald-500/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/70 focus:ring-emerald-500',
+		secondary: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 ring-slate-600/20 dark:ring-slate-500/30 hover:bg-slate-200 dark:hover:bg-slate-600 focus:ring-slate-500',
+		danger: 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 ring-red-600/20 dark:ring-red-500/30 hover:bg-red-200 dark:hover:bg-red-900/70 focus:ring-red-500',
 	};
 
 	const sizes = {
