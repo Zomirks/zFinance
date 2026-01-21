@@ -21,6 +21,9 @@
 
 	/* Typography */
 	--font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+	/* Responsive */
+	--breakpoint-xs: 30rem;
 }
 
 /* Base styles */
