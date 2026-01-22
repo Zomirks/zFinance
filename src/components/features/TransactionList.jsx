@@ -30,11 +30,17 @@ const TransactionList = ({ transactions = [] }) => {
 		[filtered]
 	);
 
+	const lastTransactions = filtered
+		.sort((a, b) => {
+			return new Date(b.date) - new Date(a.date);
+		})
+		.slice(0, 5);
+
 	return (
 		<>
-			{filtered.length > 0 ? (
+			{lastTransactions.length > 0 ? (
 				<>
-					<div className="flex gap-2 mb-4">
+					<div className="flex justify-center gap-x-2 mb-4">
 						{FILTER_BUTTONS.map(({ key, label }) => (
 							<Button
 								key={key}
@@ -47,11 +53,11 @@ const TransactionList = ({ transactions = [] }) => {
 					</div>
 
 					<div className='text-slate-600 dark:text-slate-300 text-sm pb-3 flex justify-between'>
-						<p className=''>{filtered.length} transaction(s)</p>
+						<p className=''>{lastTransactions.length} transaction(s)</p>
 						<p>Total : {filteredTotal}</p>
 					</div>
 					<ul className="divide-y divide-slate-100 dark:divide-slate-700">
-						{filtered.map((t) => (
+						{lastTransactions.map((t) => (
 							<TransactionItem key={t.id} {...t} />
 						))}
 					</ul>

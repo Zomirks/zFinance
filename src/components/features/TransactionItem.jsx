@@ -25,13 +25,13 @@ const TransactionItem = ({ amount, description, category, date, status }) => {
                         )}
                     </div>
                     <div className="mt-1 flex items-center justify-between gap-2 text-sm text-slate-500 dark:text-slate-400 xs:justify-start">
-                        <Badge label={category} capitalize />
+                        <span>{category}</span>
                         <span className="hidden xs:block text-slate-300 dark:text-slate-600">•</span>
-                        <span>
+                        <span className='text-slate-500 dark:text-slate-400'>
                             {formatDate(date, '', {
-                                weekday: 'short',
                                 day: 'numeric',
-                                month: 'short',
+                                month: 'numeric',
+                                year: 'numeric'
                             })}
                         </span>
                     </div>
