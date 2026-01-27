@@ -1,10 +1,12 @@
-import { Check } from 'lucide-react';
+import { useState } from 'react';
+import { Check, SquarePen, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import Badge from '../ui/Badge';
 
-const TransactionItem = ({ amount, description, category, date, status }) => {
+const TransactionItem = ({ id, amount, description, category, date, status, onDelete, onEdit }) => {
     const isPending = status === 'pending';
+    const [showActionMenu, setShowActionMenu] = useState(false);
 
     return (
         <li className="py-4 first:pt-0 last:pb-0">
@@ -42,6 +44,31 @@ const TransactionItem = ({ amount, description, category, date, status }) => {
                     {amount >= 0 ? '+' : ''}
                     {formatCurrency(amount)}
                 </span>
+
+                <span
+                    className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
+                    onClick={() => setShowActionMenu(!showActionMenu)}>
+                    {showActionMenu ? (
+                        <ChevronRight size={16} />
+                    ) : (
+                        <ChevronLeft size={16} />
+                    )}
+                </span>
+
+                {showActionMenu && (
+                    <div className='flex transition gap-x-3'>
+                        <span
+                            className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
+                            onClick={() => onEdit?.(id)}>
+                            <SquarePen size={16} />
+                        </span>
+                        <span
+                            className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
+                            onClick={() => onDelete?.(id)}>
+                            <Trash2 size={16} />
+                        </span>
+                    </div>
+                )}
             </div>
         </li>
     );

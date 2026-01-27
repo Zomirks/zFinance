@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const Header = () => {
-	const [darkMode, setDarkMode] = useState(() => {
-		const saved = localStorage.getItem('darkMode');
-		return saved ? JSON.parse(saved) : false;
-	});
+	const [darkMode, setDarkMode] = useLocalStorage('darkMode', false)
 
 	useEffect(() => {
 		if (darkMode) {
@@ -13,7 +11,6 @@ const Header = () => {
 		} else {
 			document.documentElement.classList.remove('dark');
 		}
-		localStorage.setItem('darkMode', JSON.stringify(darkMode));
 	}, [darkMode]);
 
 	return (

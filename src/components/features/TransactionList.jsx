@@ -11,54 +11,58 @@ const FILTER_BUTTONS = [
 	{ key: 'expense', label: 'Dépenses' },
 ];
 
-const TransactionList = ({ transactions = [] }) => {
+const TransactionList = ({ transactions = [], limit = null, onDelete, onEdit }) => {
 	const [filter, setFilter] = useState('all');
 
 	const filtered = useMemo(() => {
 		switch (filter) {
 			case 'income':
-				return transactions.filter(t => t.amount > 0);
+				return transactions.filter(t => (t?.amount ?? 0) > 0);
 			case 'expense':
-				return transactions.filter(t => t.amount < 0);
+				return transactions.filter(t => (t?.amount ?? 0) < 0);
 			default:
 				return transactions;
 		}
 	}, [filter, transactions]);
 
 	const filteredTotal = useMemo(
-		() => formatCurrency(filtered.reduce((sum, t) => sum + t.amount, 0)),
+		() => formatCurrency(filtered.reduce((sum, t) => sum + (t?.amount ?? 0), 0)),
 		[filtered]
 	);
 
-	const lastTransactions = filtered
+	let lastTransactions = filtered
 		.sort((a, b) => {
 			return new Date(b.date) - new Date(a.date);
-		})
-		.slice(0, 5);
+		});
+	
+
+	if (limit) {
+		lastTransactions = lastTransactions.slice(0, limit);
+	}
 
 	return (
 		<>
+			<div className="flex justify-center gap-x-2 mb-4">
+				{FILTER_BUTTONS.map(({ key, label }) => (
+					<Button
+						key={key}
+						variant={filter === key ? 'primary' : 'secondary'}
+						onClick={() => setFilter(key)}
+					>
+						{label}
+					</Button>
+				))}
+			</div>
+
 			{lastTransactions.length > 0 ? (
 				<>
-					<div className="flex justify-center gap-x-2 mb-4">
-						{FILTER_BUTTONS.map(({ key, label }) => (
-							<Button
-								key={key}
-								variant={filter === key ? 'primary' : 'secondary'}
-								onClick={() => setFilter(key)}
-							>
-								{label}
-							</Button>
-						))}
-					</div>
-
 					<div className='text-slate-600 dark:text-slate-300 text-sm pb-3 flex justify-between'>
 						<p className=''>{lastTransactions.length} transaction(s)</p>
 						<p>Total : {filteredTotal}</p>
 					</div>
 					<ul className="divide-y divide-slate-100 dark:divide-slate-700">
 						{lastTransactions.map((t) => (
-							<TransactionItem key={t.id} {...t} />
+							<TransactionItem key={t.id} {...t} onDelete={onDelete} onEdit={onEdit} />
 						))}
 					</ul>
 				</>

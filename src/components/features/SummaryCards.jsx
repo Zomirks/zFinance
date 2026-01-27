@@ -1,16 +1,18 @@
 import Card from '../ui/Card';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
-const SummaryCards = ({ transactions = [], previousMonthBalance }) => {
-	const balance = transactions.reduce((sum, t) => sum + t.amount, 0);
+const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
+	const balance = transactions.reduce((sum, t) => sum + (t?.amount ?? 0), 0);
 	const income = transactions
-		.filter(t => t.amount > 0)
-		.reduce((sum, t) => sum + t.amount, 0);
+		.filter(t => (t?.amount ?? 0) > 0)
+		.reduce((sum, t) => sum + (t?.amount ?? 0), 0);
 	const expense = transactions
-		.filter(t => t.amount < 0)
-		.reduce((sum, t) => sum + t.amount, 0);
+		.filter(t => (t?.amount ?? 0) < 0)
+		.reduce((sum, t) => sum + (t?.amount ?? 0), 0);
 
-	const evolution = balance * 100 / previousMonthBalance - 100;
+	const evolution = previousMonthBalance !== 0
+		? (balance * 100 / previousMonthBalance - 100)
+		: 0;
 
 	return (
 		<>

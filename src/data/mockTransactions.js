@@ -28,10 +28,10 @@ function randomDescription(category) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-const mockTransactions = Array.from({ length: 20 }, (_, i) => {
+const mockTransactions = Array.from({ length: 20 }, () => {
     const category = categories[Math.floor(Math.random() * categories.length)];
     return {
-        id: (i + 1).toString(),
+        id: crypto.randomUUID(),
         amount: randomAmount(category),
         description: randomDescription(category),
         category,
