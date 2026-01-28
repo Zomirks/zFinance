@@ -1,17 +1,8 @@
-import { useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const Header = () => {
 	const { theme, toggleTheme } = useTheme();
-
-	useEffect(() => {
-		if (theme === 'dark') {
-			document.documentElement.classList.add('dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-		}
-	}, [theme]);
 
 	return (
 		<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">

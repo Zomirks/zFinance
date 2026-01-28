@@ -1,18 +1,24 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const ThemeContext = createContext(null);
+ThemeContext.displayName = 'ThemeContext';
 
 export function ThemeProvider({ children }) {
 	const [theme, setTheme] = useLocalStorage('theme', 'light');
 
 	const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
-	const value = {
+	// Apply dark mode class to document
+	useEffect(() => {
+		document.documentElement.classList.toggle('dark', theme === 'dark');
+	}, [theme]);
+
+	const value = useMemo(() => ({
 		theme,
 		setTheme,
 		toggleTheme,
-	};
+	}), [theme]);
 
 	return (
 		<ThemeContext.Provider value={value}>
