@@ -1,102 +1,21 @@
-import { useState } from 'react';
+import { Routes, Route } from 'react-router';
 
 // Components - Layout
 import Header from './components/layout/Header';
 
-// Components - Features
-import TransactionList from './components/features/TransactionList';
-import SummaryCards from './components/features/SummaryCards';
-import TransactionModal from './components/features/TransactionModal';
-
-// Components - UI
-import {Button, Card} from './components/ui';
-
-// Hooks
-import useLocalStorage from './hooks/useLocalStorage';
-
 // Pages
-import Transactions from './pages/TransactionsPage';
-
-// Variables
-const RECENT_TRANSACTIONS_LIMIT = 5;
-const PREVIOUS_MONTH_BALANCE = 2600;
+import DashboardPage from './pages/DashboardPage';
+import TransactionsPage from './pages/TransactionsPage';
 
 function App() {
-	const [transactions, setTransactions] = useLocalStorage('transactions', []);
-	const [showTransactionModal, setShowTransactionModal] = useState(false);
-	const [editingTransaction, setEditingTransaction] = useState(null);
-
-	const [search, setSearch] = useState('');
-
-	const handleAddTransaction = (newTransaction) => {
-		setTransactions(prev => [...prev, newTransaction]);
-		setShowTransactionModal(false);
-	}
-
-	const handleDeleteTransaction = (id) => {
-		setTransactions(prev => prev.filter(t => t.id !== id));
-	}
-
-	const handleEditTransaction = (id) => {
-		const transaction = transactions.find(t => t.id === id);
-		if (transaction) {
-			setEditingTransaction(transaction);
-		}
-	}
-
-	const handleUpdateTransaction = (updatedTransaction) => {
-		setTransactions(prev => prev.map(t =>
-			t.id === updatedTransaction.id ? updatedTransaction : t
-		));
-		setEditingTransaction(null);
-	}
-
-	const filteredTransactions = transactions.filter(t =>
-		t?.description?.toLowerCase().includes(search.toLowerCase()) ||
-		t?.category?.toLowerCase().includes(search.toLowerCase())
-	);
-
-
 	return (
 		<div className="min-h-screen bg-slate-50 dark:bg-slate-900">
 			<Header />
 
-			<main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
-				<SummaryCards transactions={transactions} previousMonthBalance={PREVIOUS_MONTH_BALANCE} />
-
-				<Card title='Dernières Transactions'>
-					<TransactionList transactions={transactions} limit={RECENT_TRANSACTIONS_LIMIT} onDelete={handleDeleteTransaction} onEdit={handleEditTransaction} />
-				</Card>
-
-				<div className="flex justify-center">
-					<Button variant="primary" size="lg" onClick={(e) => setShowTransactionModal(true)}>
-						Ajouter
-					</Button>
-				</div>
-
-				<Card title='Transactions'>
-					<input
-						type="text"
-						placeholder="Rechercher une transaction..."
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow"
-					/>
-					<TransactionList transactions={filteredTransactions} onDelete={handleDeleteTransaction} onEdit={handleEditTransaction} />
-				</Card>
-			</main>
-
-			{showTransactionModal && (
-				<TransactionModal onSubmit={handleAddTransaction} onClose={() => setShowTransactionModal(false)} />
-			)}
-
-			{editingTransaction && (
-				<TransactionModal
-					transaction={editingTransaction}
-					onSubmit={handleUpdateTransaction}
-					onClose={() => setEditingTransaction(null)}
-				/>
-			)}
+			<Routes>
+				<Route path="/" element={<DashboardPage />} />
+				<Route path="/transactions" element={<TransactionsPage />} />
+			</Routes>
 		</div>
 	);
 }
