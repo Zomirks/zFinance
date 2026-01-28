@@ -1,13 +1,23 @@
 import { useState } from 'react';
 
-import Button from './components/ui/Button';
-import Card from './components/ui/Card';
-import TransactionList from './components/features/TransactionList';
+// Components - Layout
 import Header from './components/layout/Header';
+
+// Components - Features
+import TransactionList from './components/features/TransactionList';
 import SummaryCards from './components/features/SummaryCards';
-import useLocalStorage from './hooks/useLocalStorage';
 import TransactionModal from './components/features/TransactionModal';
 
+// Components - UI
+import {Button, Card} from './components/ui';
+
+// Hooks
+import useLocalStorage from './hooks/useLocalStorage';
+
+// Pages
+import Transactions from './pages/TransactionsPage';
+
+// Variables
 const RECENT_TRANSACTIONS_LIMIT = 5;
 const PREVIOUS_MONTH_BALANCE = 2600;
 

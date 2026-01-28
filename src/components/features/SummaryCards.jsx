@@ -1,4 +1,4 @@
-import Card from '../ui/Card';
+import {Card} from '../ui';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
 const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {

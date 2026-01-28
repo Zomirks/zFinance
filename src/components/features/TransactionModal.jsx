@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { Calendar1 } from 'lucide-react';
-import Button from '../ui/Button';
-import Modal from '../ui/Modal';
+import {Button, Modal} from '../ui';
 
 const CATEGORIES = {
 	income: ['Salaire', 'Freelance', 'Investissements', 'Autres'],

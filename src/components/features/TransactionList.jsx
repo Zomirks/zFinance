@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { formatCurrency } from '../../utils/formatters';
 import TransactionItem from './TransactionItem';
-import Button from '../ui/Button';
+import { Button } from '../ui';
 
 import { ArrowRightLeft } from 'lucide-react';
 

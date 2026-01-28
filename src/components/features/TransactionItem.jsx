@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { Check, SquarePen, ChevronLeft, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
 
 import { formatCurrency, formatDate } from '../../utils/formatters';
-import Badge from '../ui/Badge';
-import Button from '../ui/Button';
-import Modal from '../ui/Modal';
+import {Badge, Button, Modal} from '../ui';
 
 const TransactionItem = ({ id, amount, description, category, date, status, onDelete, onEdit }) => {
     const isPending = status === 'pending';
