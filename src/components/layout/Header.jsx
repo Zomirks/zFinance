@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const Header = () => {
-	const [darkMode, setDarkMode] = useLocalStorage('darkMode', false)
+	const { theme, toggleTheme } = useTheme();
 
 	useEffect(() => {
-		if (darkMode) {
+		if (theme === 'dark') {
 			document.documentElement.classList.add('dark');
 		} else {
 			document.documentElement.classList.remove('dark');
 		}
-	}, [darkMode]);
+	}, [theme]);
 
 	return (
 		<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
@@ -20,11 +20,11 @@ const Header = () => {
 					zFinance
 				</h1>
 				<button
-					onClick={() => setDarkMode(!darkMode)}
+					onClick={toggleTheme}
 					className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
 					aria-label="Toggle dark mode"
 				>
-					{darkMode ? (
+					{theme === 'dark' ? (
 						<Sun />
 					) : (
 						<Moon />

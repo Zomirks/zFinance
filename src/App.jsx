@@ -8,6 +8,8 @@ import SummaryCards from './components/features/SummaryCards';
 import useLocalStorage from './hooks/useLocalStorage';
 import TransactionModal from './components/features/TransactionModal';
 
+import { ThemeProvider } from './contexts/ThemeContext';
+
 const RECENT_TRANSACTIONS_LIMIT = 5;
 const PREVIOUS_MONTH_BALANCE = 2600;
 
@@ -48,46 +50,48 @@ function App() {
 
 
 	return (
-		<div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-			<Header />
+		<ThemeProvider>
+			<div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+				<Header />
 
-			<main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
-				<SummaryCards transactions={transactions} previousMonthBalance={PREVIOUS_MONTH_BALANCE} />
+				<main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
+					<SummaryCards transactions={transactions} previousMonthBalance={PREVIOUS_MONTH_BALANCE} />
 
-				<Card title='Dernières Transactions'>
-					<TransactionList transactions={transactions} limit={RECENT_TRANSACTIONS_LIMIT} onDelete={handleDeleteTransaction} onEdit={handleEditTransaction} />
-				</Card>
+					<Card title='Dernières Transactions'>
+						<TransactionList transactions={transactions} limit={RECENT_TRANSACTIONS_LIMIT} onDelete={handleDeleteTransaction} onEdit={handleEditTransaction} />
+					</Card>
 
-				<div className="flex justify-center">
-					<Button variant="primary" size="lg" onClick={(e) => setShowTransactionModal(true)}>
-						Ajouter
-					</Button>
-				</div>
+					<div className="flex justify-center">
+						<Button variant="primary" size="lg" onClick={(e) => setShowTransactionModal(true)}>
+							Ajouter
+						</Button>
+					</div>
 
-				<Card title='Transactions'>
-					<input
-						type="text"
-						placeholder="Rechercher une transaction..."
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow"
+					<Card title='Transactions'>
+						<input
+							type="text"
+							placeholder="Rechercher une transaction..."
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow"
+						/>
+						<TransactionList transactions={filteredTransactions} onDelete={handleDeleteTransaction} onEdit={handleEditTransaction} />
+					</Card>
+				</main>
+
+				{showTransactionModal && (
+					<TransactionModal onSubmit={handleAddTransaction} onClose={() => setShowTransactionModal(false)} />
+				)}
+
+				{editingTransaction && (
+					<TransactionModal
+						transaction={editingTransaction}
+						onSubmit={handleUpdateTransaction}
+						onClose={() => setEditingTransaction(null)}
 					/>
-					<TransactionList transactions={filteredTransactions} onDelete={handleDeleteTransaction} onEdit={handleEditTransaction} />
-				</Card>
-			</main>
-
-			{showTransactionModal && (
-				<TransactionModal onSubmit={handleAddTransaction} onClose={() => setShowTransactionModal(false)} />
-			)}
-
-			{editingTransaction && (
-				<TransactionModal
-					transaction={editingTransaction}
-					onSubmit={handleUpdateTransaction}
-					onClose={() => setEditingTransaction(null)}
-				/>
-			)}
-		</div>
+				)}
+			</div>
+		</ThemeProvider>
 	);
 }
 
