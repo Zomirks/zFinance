@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { Check, SquarePen, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { Check, SquarePen, ChevronLeft, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
 
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
+import Modal from '../ui/Modal';
 
 const TransactionItem = ({ id, amount, description, category, date, status, onDelete, onEdit }) => {
     const isPending = status === 'pending';
     const [showActionMenu, setShowActionMenu] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     return (
         <li className="py-4 first:pt-0 last:pb-0">
@@ -64,10 +67,47 @@ const TransactionItem = ({ id, amount, description, category, date, status, onDe
                         </span>
                         <span
                             className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
-                            onClick={() => onDelete?.(id)}>
+                            onClick={() => setShowDeleteConfirmation(true)}>
                             <Trash2 size={16} />
                         </span>
                     </div>
+                )}
+
+                {showDeleteConfirmation && (
+                    <Modal onClose={() => setShowDeleteConfirmation(false)}>
+                        <div className='flex flex-col items-center text-center'>
+                            <div className='w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4'>
+                                <AlertTriangle className='w-6 h-6 text-red-600 dark:text-red-400' />
+                            </div>
+
+                            <p className='text-slate-600 dark:text-slate-300 mb-4'>
+                                Cette action est irréversible. Voulez-vous vraiment supprimer cette transaction ?
+                            </p>
+
+                            <div className='w-full p-3 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
+                                <p className='font-medium text-slate-900 dark:text-white'>{description}</p>
+                                <div className='flex items-center justify-center gap-2 mt-1 text-sm text-slate-500 dark:text-slate-400'>
+                                    <span>{formatDate(date)}</span>
+                                    <span>•</span>
+                                    <span className={amount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
+                                        {amount >= 0 ? '+' : ''}{formatCurrency(amount)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='grid grid-cols-2 gap-3 mt-6'>
+                            <Button
+                                variant='secondary'
+                                onClick={() => setShowDeleteConfirmation(false)}
+                            >Annuler</Button>
+
+                            <Button
+                                variant='danger'
+                                onClick={() => onDelete?.(id)}
+                            >Supprimer</Button>
+                        </div>
+                    </Modal>
                 )}
             </div>
         </li>
