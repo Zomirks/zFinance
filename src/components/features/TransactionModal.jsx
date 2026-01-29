@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
-import { Calendar1 } from 'lucide-react';
-import Button from '../ui/Button';
-import Modal from '../ui/Modal';
+import { Calendar1, ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { Button, Modal } from '../ui';
 
 const CATEGORIES = {
 	income: ['Salaire', 'Freelance', 'Investissements', 'Autres'],
@@ -92,15 +91,33 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 	const categories = CATEGORIES[formData.type];
 	const isValid = formData.amount && formData.category && formData.description.trim();
 
+	const inputStyles = `
+		w-full px-4 py-3
+		bg-white/50 dark:bg-secondary-800/50
+		backdrop-blur-sm
+		border border-secondary-200/50 dark:border-secondary-700/50
+		rounded-xl
+		text-secondary-900 dark:text-secondary-100
+		placeholder-secondary-400 dark:placeholder-secondary-500
+		focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500
+		transition-all
+	`;
+
 	return (
-		<Modal title={isEditMode ? 'Modifier la Transaction' : 'Nouvelle Transaction'} onClose={onClose}>
+		<Modal title={isEditMode ? 'Modifier la transaction' : 'Nouvelle transaction'} onClose={onClose}>
 			<form onSubmit={handleSubmit} className="space-y-5">
-				<div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-700 rounded-lg">
+				<div className="grid grid-cols-2 gap-2 p-1.5 bg-secondary-100/80 dark:bg-secondary-800/80 backdrop-blur-sm rounded-xl">
 					<label
-						className={`py-2.5 px-4 rounded-md text-sm font-medium transition-all text-center cursor-pointer ${formData.type === 'expense'
-							? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 shadow-sm ring-1 ring-inset ring-red-600/20 dark:ring-red-500/30'
-							: 'text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100'
-							}`}
+						className={`
+							flex items-center justify-center gap-2
+							py-3 px-4 rounded-lg
+							text-sm font-medium
+							transition-all cursor-pointer
+							${formData.type === 'expense'
+								? 'bg-white dark:bg-secondary-700 text-red-600 dark:text-red-400 shadow-sm'
+								: 'text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200'
+							}
+						`}
 					>
 						<input
 							type="radio"
@@ -113,13 +130,20 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 								updateField('category', '');
 							}}
 						/>
+						<ArrowDownLeft size={18} />
 						Dépense
 					</label>
 					<label
-						className={`py-2.5 px-4 rounded-md text-sm font-medium transition-all text-center cursor-pointer ${formData.type === 'income'
-							? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 shadow-sm ring-1 ring-inset ring-emerald-600/20 dark:ring-emerald-500/30'
-							: 'text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100'
-							}`}
+						className={`
+							flex items-center justify-center gap-2
+							py-3 px-4 rounded-lg
+							text-sm font-medium
+							transition-all cursor-pointer
+							${formData.type === 'income'
+								? 'bg-white dark:bg-secondary-700 text-primary-600 dark:text-primary-400 shadow-sm'
+								: 'text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200'
+							}
+						`}
 					>
 						<input
 							type="radio"
@@ -132,12 +156,13 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 								updateField('category', '');
 							}}
 						/>
+						<ArrowUpRight size={18} />
 						Revenu
 					</label>
 				</div>
 
-				<div className="space-y-1.5">
-					<label htmlFor="description" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+				<div className="space-y-2">
+					<label htmlFor="description" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Description
 					</label>
 					<input
@@ -146,17 +171,21 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 						value={formData.description}
 						onChange={(e) => updateField('description', e.target.value)}
 						placeholder="Ex: Course au supermarché"
-						className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow"
+						className={inputStyles}
 					/>
-					{errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+					{errors.description && (
+						<p className="text-red-500 dark:text-red-400 text-sm">{errors.description}</p>
+					)}
 				</div>
 
-				<div className="space-y-1.5">
-					<label htmlFor="amount" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+				<div className="space-y-2">
+					<label htmlFor="amount" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Montant
 					</label>
 					<div className="relative">
-						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-medium">€</span>
+						<span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-700 dark:text-secondary-500 font-medium z-1">
+							€
+						</span>
 						<input
 							type="number"
 							id="amount"
@@ -165,14 +194,17 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							placeholder="0.00"
 							min={0}
 							step="0.01"
-							className="w-full pl-8 pr-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow"
+							inputMode="decimal"
+							className={`${inputStyles} pl-9`}
 						/>
-						{errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
 					</div>
+					{errors.amount && (
+						<p className="text-red-500 dark:text-red-400 text-sm">{errors.amount}</p>
+					)}
 				</div>
 
-				<div className="space-y-1.5">
-					<label htmlFor="date" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+				<div className="space-y-2">
+					<label htmlFor="date" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Date
 					</label>
 					<div className="flex gap-2">
@@ -182,51 +214,68 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							id="date"
 							value={formData.date}
 							onChange={(e) => updateField('date', e.target.value)}
-							className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow [&::-webkit-calendar-picker-indicator]:hidden"
+							className={`flex-1 ${inputStyles}`}
 						/>
 						<button
 							type="button"
 							onClick={() => dateInputRef.current?.showPicker()}
-							className="px-3 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+							className="
+								px-4 py-3
+								bg-white/50 dark:bg-secondary-800/50
+								backdrop-blur-sm
+								border border-secondary-200/50 dark:border-secondary-700/50
+								rounded-xl
+								text-secondary-400 dark:text-secondary-500
+								hover:text-secondary-600 dark:hover:text-secondary-300
+								hover:border-secondary-300 dark:hover:border-secondary-600
+								focus:outline-none focus:ring-2 focus:ring-primary-500/50
+								transition-all
+							"
 							aria-label="Ouvrir le calendrier"
 						>
-							<Calendar1 className="w-5 h-5" />
+							<Calendar1 size={20} />
 						</button>
 					</div>
 				</div>
 
-				<div className="space-y-1.5">
-					<label htmlFor="category" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+				<div className="space-y-2">
+					<label htmlFor="category" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Catégorie
 					</label>
-					<select
-						name="category"
-						id="category"
-						value={formData.category}
-						onChange={(e) => updateField('category', e.target.value)}
-						className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow appearance-none cursor-pointer"
-					>
-						<option value="" disabled>Sélectionner une catégorie</option>
-						{categories.map((label) => (
-							<option key={label} value={label}>{label}</option>
-						))}
-					</select>
-					{errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+					<div className="relative">
+						<select
+							name="category"
+							id="category"
+							value={formData.category}
+							onChange={(e) => updateField('category', e.target.value)}
+							className={`${inputStyles} cursor-pointer appearance-none pr-10`}
+						>
+							<option value="" disabled>Sélectionner une catégorie</option>
+							{categories.map((label) => (
+								<option key={label} value={label}>{label}</option>
+							))}
+						</select>
+						<ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+					</div>
+					{errors.category && (
+						<p className="text-red-500 dark:text-red-400 text-sm">{errors.category}</p>
+					)}
 				</div>
 
-				<div className="flex flex-col pt-2 text-center">
+				<div className="pt-2">
 					<Button
 						type="submit"
 						variant="primary"
 						size="lg"
-						className="flex-1"
+						className="w-full"
 						disabled={!isValid}
 					>
-						{isEditMode ? 'Modifier' : 'Ajouter'}
+						{isEditMode ? 'Modifier' : 'Ajouter la transaction'}
 					</Button>
 				</div>
 			</form>
 		</Modal>
-	)
+	);
 }
-export default TransactionModal
+
+export default TransactionModal;

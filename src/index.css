@@ -3,32 +3,229 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-	/* Brand Primary - Emerald */
-	--color-brand-50: #ecfdf5;
-	--color-brand-100: #d1fae5;
-	--color-brand-200: #a7f3d0;
-	--color-brand-300: #6ee7b7;
-	--color-brand-400: #34d399;
-	--color-brand-500: #10b981;
-	--color-brand-600: #059669;
-	--color-brand-700: #047857;
-	--color-brand-800: #065f46;
-	--color-brand-900: #064e3b;
+	/* ========================================
+	   PRIMARY - Emerald (couleur principale)
+	   ======================================== */
+	--color-primary-50: #ecfdf5;
+	--color-primary-100: #d1fae5;
+	--color-primary-200: #a7f3d0;
+	--color-primary-300: #6ee7b7;
+	--color-primary-400: #34d399;
+	--color-primary-500: #10b981;
+	--color-primary-600: #059669;
+	--color-primary-700: #047857;
+	--color-primary-800: #065f46;
+	--color-primary-900: #064e3b;
 
-	/* Status Colors */
+	/* ========================================
+	   SECONDARY - Slate (couleur secondaire)
+	   ======================================== */
+	--color-secondary-50: #f8fafc;
+	--color-secondary-100: #f1f5f9;
+	--color-secondary-200: #e2e8f0;
+	--color-secondary-300: #cbd5e1;
+	--color-secondary-400: #94a3b8;
+	--color-secondary-500: #64748b;
+	--color-secondary-600: #475569;
+	--color-secondary-700: #334155;
+	--color-secondary-800: #1e293b;
+	--color-secondary-900: #0f172a;
+	--color-secondary-950: #020617;
+
+	/* ========================================
+	   ACCENT - Teal (couleur d'accent)
+	   ======================================== */
+	--color-accent-400: #2dd4bf;
+	--color-accent-500: #14b8a6;
+	--color-accent-600: #0d9488;
+
+	/* ========================================
+	   STATUS COLORS
+	   ======================================== */
+	--color-success-light: #d1fae5;
 	--color-success: #10b981;
+	--color-success-dark: #065f46;
+
+	--color-danger-light: #fee2e2;
 	--color-danger: #ef4444;
+	--color-danger-dark: #991b1b;
+
+	--color-warning-light: #fef3c7;
 	--color-warning: #f59e0b;
+	--color-warning-dark: #92400e;
+
+	--color-info-light: #e0f2fe;
 	--color-info: #0ea5e9;
+	--color-info-dark: #075985;
 
-	/* Typography */
-	--font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+	/* ========================================
+	   GLASSMORPHISM
+	   ======================================== */
+	--glass-bg-light: rgba(255, 255, 255, 0.7);
+	--glass-bg-dark: rgba(30, 41, 59, 0.7);
+	--glass-border-light: rgba(255, 255, 255, 0.3);
+	--glass-border-dark: rgba(148, 163, 184, 0.2);
+	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	--glass-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-	/* Responsive */
+	/* ========================================
+	   TYPOGRAPHY
+	   ======================================== */
+	--font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+	/* ========================================
+	   SPACING & SIZING
+	   ======================================== */
+	--radius-sm: 0.5rem;
+	--radius-md: 0.75rem;
+	--radius-lg: 1rem;
+	--radius-xl: 1.5rem;
+	--radius-2xl: 2rem;
+
+	/* ========================================
+	   RESPONSIVE BREAKPOINTS
+	   ======================================== */
 	--breakpoint-xs: 30rem;
 }
 
-/* Base styles */
+/* ========================================
+   BASE STYLES
+   ======================================== */
 body {
-  	@apply bg-slate-50 text-slate-800 antialiased;
+	@apply bg-secondary-100 text-secondary-800 antialiased;
+	@apply dark:bg-secondary-950 dark:text-secondary-100;
+	min-height: 100dvh;
+}
+
+/* ========================================
+   GLASSMORPHISM UTILITIES
+   ======================================== */
+.glass {
+	background: var(--glass-bg-light);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--glass-border-light);
+	box-shadow: var(--glass-shadow);
+}
+
+.dark .glass {
+	background: var(--glass-bg-dark);
+	border-color: var(--glass-border-dark);
+}
+
+.glass-card {
+	background: var(--glass-bg-light);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid var(--glass-border-light);
+	box-shadow: var(--glass-shadow);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark .glass-card {
+	background: var(--glass-bg-dark);
+	border-color: var(--glass-border-dark);
+}
+
+.glass-card:hover {
+	box-shadow: var(--glass-shadow-lg);
+}
+
+/* ========================================
+   MOBILE-FIRST TOUCH IMPROVEMENTS
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+	button,
+	[role="button"],
+	a {
+		min-height: 44px;
+		min-width: 44px;
+	}
+}
+
+/* Safe area for notched devices */
+@supports (padding: max(0px)) {
+	.safe-area-bottom {
+		padding-bottom: max(1rem, env(safe-area-inset-bottom));
+	}
+
+	.safe-area-top {
+		padding-top: max(0px, env(safe-area-inset-top));
+	}
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-secondary-300);
+	border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+	background: var(--color-secondary-600);
+}
+
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+input[type="date"]::-webkit-calendar-picker-indicator {
+	display: none;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slide-up {
+	from {
+		opacity: 0;
+		transform: translateY(100%);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scale-in {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.animate-fade-in {
+	animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+	animation: slide-up 0.3s ease-out;
+}
+
+.animate-scale-in {
+	animation: scale-in 0.2s ease-out;
 }

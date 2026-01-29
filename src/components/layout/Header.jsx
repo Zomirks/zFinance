@@ -1,37 +1,61 @@
-import { useEffect } from 'react';
-import { Moon, Sun } from 'lucide-react';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import { Moon, Sun, Settings } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { Link } from 'react-router';
+import { Button } from '../ui';
 
 const Header = () => {
-	const [darkMode, setDarkMode] = useLocalStorage('darkMode', false)
-
-	useEffect(() => {
-		if (darkMode) {
-			document.documentElement.classList.add('dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-		}
-	}, [darkMode]);
+	const { theme, toggleTheme } = useTheme();
 
 	return (
-		<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-			<div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-				<h1 className="text-xl font-bold text-emerald-600 tracking-tight">
-					zFinance
-				</h1>
-				<button
-					onClick={() => setDarkMode(!darkMode)}
-					className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-					aria-label="Toggle dark mode"
+		<header
+			className="
+				sticky top-0 z-40
+				bg-white/70 dark:bg-secondary-900/70
+				backdrop-blur-xl
+				border-b border-white/20 dark:border-secondary-800/50
+				safe-area-top
+			"
+		>
+			<div className="max-w-4xl mx-auto px-4 xs:px-6 py-3 xs:py-4 flex items-center justify-between">
+				<Link
+					className="
+						text-xl xs:text-2xl font-bold
+						bg-linear-to-r from-primary-500 to-accent-500
+						bg-clip-text text-transparent
+						tracking-tight
+						hover:from-primary-400 hover:to-accent-400
+						transition-all
+					"
+					to="/"
 				>
-					{darkMode ? (
-						<Sun />
-					) : (
-						<Moon />
-					)}
-				</button>
+					zFinance
+				</Link>
+
+				<nav className="flex items-center gap-1 xs:gap-2">
+					<Button
+						variant="ghost"
+						size="icon"
+						aria-label="Paramètres"
+					>
+						<Settings size={20} />
+					</Button>
+
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={toggleTheme}
+						aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
+					>
+						{theme === 'dark' ? (
+							<Sun size={20} className="text-amber-400" />
+						) : (
+							<Moon size={20} />
+						)}
+					</Button>
+				</nav>
 			</div>
 		</header>
-	)
-}
-export default Header
+	);
+};
+
+export default Header;
