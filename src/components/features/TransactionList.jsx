@@ -2,7 +2,9 @@ import { useState, useMemo } from 'react';
 import { formatCurrency } from '../../utils/formatters';
 import TransactionItem from './TransactionItem';
 import { Button } from '../ui';
-import { ArrowRightLeft } from 'lucide-react';
+import { ArrowRight, ArrowRightLeft } from 'lucide-react';
+
+import { Link } from 'react-router';
 
 const FILTER_BUTTONS = [
 	{ key: 'all', label: 'Toutes' },
@@ -39,18 +41,29 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 
 	return (
 		<div className="space-y-4">
-			<div className="flex gap-2 pb-1 -mx-1 px-1 scrollbar-hide">
-				{FILTER_BUTTONS.map(({ key, label }) => (
-					<Button
-						key={key}
-						variant={filter === key ? 'primary' : 'secondary'}
-						size="sm"
-						onClick={() => setFilter(key)}
-						className="shrink-0"
-					>
-						{label}
-					</Button>
-				))}
+			<div className="flex items-center justify-between mb-4">
+				<div className="flex gap-2 pb-1 -mx-1 px-1 scrollbar-hide">
+					{FILTER_BUTTONS.map(({ key, label }) => (
+						<Button
+							key={key}
+							variant={filter === key ? 'primary' : 'secondary'}
+							size="sm"
+							onClick={() => setFilter(key)}
+							className="shrink-0"
+						>
+							{label}
+						</Button>
+					))}
+				</div>
+
+				{limit && (
+					<Link to="/transactions">
+						<Button variant="ghost" size="sm" className="gap-1 -ml-2">
+							Voir tout
+							<ArrowRight size={16} />
+						</Button>
+					</Link>
+				)}
 			</div>
 
 			{lastTransactions.length > 0 ? (

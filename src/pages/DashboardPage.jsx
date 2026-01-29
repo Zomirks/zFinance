@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
-import { ArrowRight } from 'lucide-react';
 
 // Components - Features
 import AddTransactionButton from '../components/features/AddTransactionButton';
@@ -57,15 +55,6 @@ function DashboardPage() {
 			/>
 
 			<Card title="Dernières transactions">
-				<div className="flex items-center justify-between mb-4">
-					<Link to="/transactions">
-						<Button variant="ghost" size="sm" className="gap-1 -ml-2">
-							Voir tout
-							<ArrowRight size={16} />
-						</Button>
-					</Link>
-				</div>
-
 				<TransactionList
 					transactions={transactions}
 					limit={RECENT_TRANSACTIONS_LIMIT}
