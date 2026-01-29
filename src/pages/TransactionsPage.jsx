@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { Search, Plus, ArrowLeft } from 'lucide-react';
+import { Search, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router';
 
-import useLocalStorage from '../hooks/useLocalStorage';
-import { Card, Button } from '../components/ui';
+// Components - Features
+import AddTransactionButton from '../components/features/AddTransactionButton';
+import DeleteConfirmationModal from '../components/features/DeleteConfirmationModal';
 import TransactionList from '../components/features/TransactionList';
 import TransactionModal from '../components/features/TransactionModal';
-import DeleteConfirmationModal from '../components/features/DeleteConfirmationModal';
+
+// Components - UI
+import { Card, Button } from '../components/ui';
+
+// Hooks
+import useLocalStorage from '../hooks/useLocalStorage';
 
 function TransactionsPage() {
 	const [transactions, setTransactions] = useLocalStorage('transactions', []);
@@ -89,27 +95,7 @@ function TransactionsPage() {
 				/>
 			</Card>
 
-			<div className="fixed bottom-6 right-4 xs:right-6 z-30 safe-area-bottom">
-				<Button
-					variant="primary"
-					size="lg"
-					onClick={() => setShowTransactionModal(true)}
-					className="
-						rounded-full shadow-2xl shadow-primary-500/30
-						hover:shadow-primary-500/40 hover:scale-105
-						active:scale-95
-						w-14 h-14 xs:w-auto xs:h-auto xs:rounded-xl
-						p-0 xs:px-6 xs:py-3
-					"
-					aria-label="Ajouter une transaction"
-				>
-					<Plus size={24} className="xs:hidden" />
-					<span className="hidden xs:flex items-center gap-2">
-						<Plus size={20} />
-						Ajouter
-					</span>
-				</Button>
-			</div>
+			<AddTransactionButton onClick={() => setShowTransactionModal(true)} />
 
 			{showTransactionModal && (
 				<TransactionModal

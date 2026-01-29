@@ -39,7 +39,7 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 
 	return (
 		<div className="space-y-4">
-			<div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+			<div className="flex gap-2 pb-1 -mx-1 px-1 scrollbar-hide">
 				{FILTER_BUTTONS.map(({ key, label }) => (
 					<Button
 						key={key}

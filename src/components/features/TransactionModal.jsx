@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Calendar1, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { Calendar1, ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { Button, Modal } from '../ui';
 
 const CATEGORIES = {
@@ -183,7 +183,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 						Montant
 					</label>
 					<div className="relative">
-						<span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-secondary-500 font-medium">
+						<span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-700 dark:text-secondary-500 font-medium z-1">
 							€
 						</span>
 						<input
@@ -242,18 +242,21 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 					<label htmlFor="category" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Catégorie
 					</label>
-					<select
-						name="category"
-						id="category"
-						value={formData.category}
-						onChange={(e) => updateField('category', e.target.value)}
-						className={`${inputStyles} cursor-pointer`}
-					>
-						<option value="" disabled>Sélectionner une catégorie</option>
-						{categories.map((label) => (
-							<option key={label} value={label}>{label}</option>
-						))}
-					</select>
+					<div className="relative">
+						<select
+							name="category"
+							id="category"
+							value={formData.category}
+							onChange={(e) => updateField('category', e.target.value)}
+							className={`${inputStyles} cursor-pointer appearance-none pr-10`}
+						>
+							<option value="" disabled>Sélectionner une catégorie</option>
+							{categories.map((label) => (
+								<option key={label} value={label}>{label}</option>
+							))}
+						</select>
+						<ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+					</div>
 					{errors.category && (
 						<p className="text-red-500 dark:text-red-400 text-sm">{errors.category}</p>
 					)}
