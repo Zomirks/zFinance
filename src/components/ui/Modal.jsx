@@ -1,7 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { X } from 'lucide-react';
 
 const Modal = ({ children, title, onClose }) => {
+	const [isClosing, setIsClosing] = useState(false);
+
+	const handleClose = useCallback(() => {
+		setIsClosing(true);
+		setTimeout(() => {
+			onClose?.();
+		}, 200);
+	}, [onClose]);
+
 	useEffect(() => {
 		document.body.style.overflow = 'hidden';
 		return () => {
@@ -11,11 +20,11 @@ const Modal = ({ children, title, onClose }) => {
 
 	useEffect(() => {
 		const handleEscape = (e) => {
-			if (e.key === 'Escape') onClose?.();
+			if (e.key === 'Escape') handleClose();
 		};
 		window.addEventListener('keydown', handleEscape);
 		return () => window.removeEventListener('keydown', handleEscape);
-	}, [onClose]);
+	}, [handleClose]);
 
 	return (
 		<div
@@ -25,13 +34,13 @@ const Modal = ({ children, title, onClose }) => {
 			aria-labelledby={title ? 'modal-title' : undefined}
 		>
 			<div
-				className="absolute inset-0 bg-secondary-950/60 backdrop-blur-sm"
-				onClick={onClose}
+				className={`absolute inset-0 bg-secondary-950/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : ''}`}
+				onClick={handleClose}
 				aria-hidden="true"
 			/>
 
 			<div
-				className="
+				className={`
 					relative w-full xs:max-w-md
 					max-h-[90dvh] overflow-y-auto
 					bg-white/80 dark:bg-secondary-800/80
@@ -39,9 +48,9 @@ const Modal = ({ children, title, onClose }) => {
 					border border-white/20 dark:border-secondary-700/30
 					shadow-2xl shadow-secondary-900/20 dark:shadow-black/40
 					rounded-t-3xl xs:rounded-2xl
-					animate-slide-up xs:animate-scale-in
 					safe-area-bottom
-				"
+					${isClosing ? 'animate-slide-down xs:animate-scale-out' : 'animate-slide-up xs:animate-scale-in'}
+				`}
 			>
 				<div className="sticky top-0 z-10 flex items-center justify-between p-5 pb-0 bg-transparent">
 					<div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-secondary-300 dark:bg-secondary-600 xs:hidden" />
@@ -67,7 +76,7 @@ const Modal = ({ children, title, onClose }) => {
 							focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500
 						"
 						aria-label="Fermer"
-						onClick={onClose}
+						onClick={handleClose}
 					>
 						<X size={20} />
 					</button>

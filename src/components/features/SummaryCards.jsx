@@ -32,7 +32,7 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 				<div className="absolute -bottom-8 -left-8 w-32 h-32 bg-primary-400/20 rounded-full blur-xl" />
 
 				<div className="absolute bottom-4 right-4 xs:bottom-6 xs:right-6 flex flex-col items-center text-white/30 pointer-events-none">
-					<span className="font-black text-5xl xs:text-8xl leading-none">
+					<span className="font-black text-7xl xs:text-8xl leading-none">
 						{formatDate(new Date(), '', { day: 'numeric' })}
 					</span>
 					<span className="font-bold text-lg xs:text-2xl tracking-widest uppercase">
@@ -80,7 +80,7 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 							Revenus
 						</span>
 						<div className="p-1.5 rounded-lg bg-primary-100/80 dark:bg-primary-900/30">
-							<ArrowUpRight size={14} className="text-primary-600 dark:text-primary-400" />
+							<ArrowUpRight className="text-primary-600 dark:text-primary-400 size-6 xs:size-4" />
 						</div>
 					</div>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
@@ -94,7 +94,7 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 							Dépenses
 						</span>
 						<div className="p-1.5 rounded-lg bg-danger-light/80 dark:bg-red-900/30">
-							<ArrowDownRight size={14} className="text-red-600 dark:text-red-400" />
+							<ArrowDownRight className="text-red-600 dark:text-red-400 size-6 xs:size-4" />
 						</div>
 					</div>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">

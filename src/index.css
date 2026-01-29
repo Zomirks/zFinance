@@ -218,6 +218,37 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	}
 }
 
+@keyframes slide-down {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(100%);
+	}
+}
+
+@keyframes scale-out {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+}
+
+@keyframes fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
 .animate-fade-in {
 	animation: fade-in 0.3s ease-out;
 }
@@ -228,4 +259,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .animate-scale-in {
 	animation: scale-in 0.2s ease-out;
+}
+
+.animate-slide-down {
+	animation: slide-down 0.3s ease-out forwards;
+}
+
+.animate-scale-out {
+	animation: scale-out 0.2s ease-out forwards;
+}
+
+.animate-fade-out {
+	animation: fade-out 0.2s ease-out forwards;
 }
