@@ -7,33 +7,55 @@ const Header = () => {
 	const { theme, toggleTheme } = useTheme();
 
 	return (
-		<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-			<div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+		<header
+			className="
+				sticky top-0 z-40
+				bg-white/70 dark:bg-secondary-900/70
+				backdrop-blur-xl
+				border-b border-white/20 dark:border-secondary-800/50
+				safe-area-top
+			"
+		>
+			<div className="max-w-4xl mx-auto px-4 xs:px-6 py-3 xs:py-4 flex items-center justify-between">
 				<Link
-					className="text-xl font-bold text-emerald-600 tracking-tight"
+					className="
+						text-xl xs:text-2xl font-bold
+						bg-linear-to-r from-primary-500 to-accent-500
+						bg-clip-text text-transparent
+						tracking-tight
+						hover:from-primary-400 hover:to-accent-400
+						transition-all
+					"
 					to="/"
 				>
 					zFinance
 				</Link>
 
-				<div className='flex gap-2'>
-					<Button variant='secondary'>
-						<Settings />
+				<nav className="flex items-center gap-1 xs:gap-2">
+					<Button
+						variant="ghost"
+						size="icon"
+						aria-label="Paramètres"
+					>
+						<Settings size={20} />
 					</Button>
 
-					<Button variant='secondary'
+					<Button
+						variant="ghost"
+						size="icon"
 						onClick={toggleTheme}
-						aria-label="Toggle dark mode"
+						aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
 					>
 						{theme === 'dark' ? (
-							<Sun />
+							<Sun size={20} className="text-amber-400" />
 						) : (
-							<Moon />
+							<Moon size={20} />
 						)}
 					</Button>
-				</div>
+				</nav>
 			</div>
 		</header>
-	)
-}
-export default Header
+	);
+};
+
+export default Header;

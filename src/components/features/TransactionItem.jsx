@@ -1,114 +1,143 @@
 import { useState } from 'react';
-import { Check, SquarePen, ChevronLeft, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
+import { Check, SquarePen, Trash2, MoreHorizontal } from 'lucide-react';
 
 import { formatCurrency, formatDate } from '../../utils/formatters';
-import {Badge, Button, Modal} from '../ui';
+import { Badge, Button } from '../ui';
 
-const TransactionItem = ({ id, amount, description, category, date, status, onDelete, onEdit }) => {
-    const isPending = status === 'pending';
-    const [showActionMenu, setShowActionMenu] = useState(false);
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+const TransactionItem = ({ id, amount, description, category, date, status, onRequestDelete, onEdit, style }) => {
+	const isPending = status === 'pending';
+	const [showActions, setShowActions] = useState(false);
 
-    return (
-        <li className="py-4 first:pt-0 last:pb-0">
-            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                    <div className="flex justify-between xs:items-center xs:justify-start gap-2">
-                        <p className="font-medium text-slate-900 dark:text-slate-100 truncate">{description}</p>
-                        {isPending ? (
-                            <Badge
-                                label='en attente...'
-                                variant='warning'
-                            />
-                        ) : (
-                            <Check
-                                size={12}
-                                strokeWidth={3} className='text-slate-400'
-                            />
-                        )}
-                    </div>
-                    <div className="mt-1 flex items-center justify-between gap-2 text-sm text-slate-500 dark:text-slate-400 xs:justify-start">
-                        <span>{category}</span>
-                        <span className="hidden xs:block text-slate-300 dark:text-slate-600">•</span>
-                        <span className='text-slate-500 dark:text-slate-400'>
-                            {formatDate(date, '', {
-                                day: 'numeric',
-                                month: 'numeric',
-                                year: 'numeric'
-                            })}
-                        </span>
-                    </div>
-                </div>
-                <span
-                    className={`text-center text-lg font-semibold shrink-0 xs:text-end ${amount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
-                >
-                    {amount >= 0 ? '+' : ''}
-                    {formatCurrency(amount)}
-                </span>
+	const isIncome = amount >= 0;
 
-                <span
-                    className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
-                    onClick={() => setShowActionMenu(!showActionMenu)}>
-                    {showActionMenu ? (
-                        <ChevronRight size={16} />
-                    ) : (
-                        <ChevronLeft size={16} />
-                    )}
-                </span>
+	return (
+		<li
+			className="
+				animate-fade-in
+				bg-white/60 dark:bg-secondary-800/60
+				backdrop-blur-sm
+				border border-white/20 dark:border-secondary-700/30
+				rounded-2xl
+				overflow-hidden
+				transition-all duration-200
+				hover:shadow-md hover:shadow-secondary-900/5 dark:hover:shadow-black/20
+			"
+			style={style}
+		>
+			<div className="p-4 flex items-center gap-3">
+				<div
+					className={`
+						shrink-0 w-12 h-12 rounded-xl
+						flex items-center justify-center
+						${isIncome
+							? 'bg-primary-100/80 dark:bg-primary-900/30'
+							: 'bg-danger-light/80 dark:bg-red-900/30'
+						}
+					`}
+				>
+					<span
+						className={`
+							text-lg font-bold
+							${isIncome
+								? 'text-primary-600 dark:text-primary-400'
+								: 'text-red-600 dark:text-red-400'
+							}
+						`}
+					>
+						{isIncome ? '+' : '-'}
+					</span>
+				</div>
 
-                {showActionMenu && (
-                    <div className='flex transition gap-x-3'>
-                        <span
-                            className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
-                            onClick={() => onEdit?.(id)}>
-                            <SquarePen size={16} />
-                        </span>
-                        <span
-                            className='text-slate-500 cursor-pointer hover:text-slate-700 transition'
-                            onClick={() => setShowDeleteConfirmation(true)}>
-                            <Trash2 size={16} />
-                        </span>
-                    </div>
-                )}
+				<div className="flex-1 min-w-0">
+					<div className="flex items-center gap-2 mb-0.5">
+						<p className="font-medium text-secondary-900 dark:text-secondary-100 truncate">
+							{description}
+						</p>
+						{isPending ? (
+							<Badge label="En attente" variant="warning" size="sm" dot />
+						) : (
+							<Check
+								size={14}
+								strokeWidth={2.5}
+								className="shrink-0 text-primary-500 dark:text-primary-400"
+							/>
+						)}
+					</div>
+					<div className="flex items-center gap-2 text-xs text-secondary-500 dark:text-secondary-400">
+						<span className="truncate">{category}</span>
+						<span className="text-secondary-300 dark:text-secondary-600">•</span>
+						<span>
+							{formatDate(date, '', {
+								day: 'numeric',
+								month: 'short',
+							})}
+						</span>
+					</div>
+				</div>
 
-                {showDeleteConfirmation && (
-                    <Modal onClose={() => setShowDeleteConfirmation(false)}>
-                        <div className='flex flex-col items-center text-center'>
-                            <div className='w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4'>
-                                <AlertTriangle className='w-6 h-6 text-red-600 dark:text-red-400' />
-                            </div>
+				<div className="shrink-0 text-right">
+					<p
+						className={`
+							text-base font-semibold
+							${isIncome
+								? 'text-primary-600 dark:text-primary-400'
+								: 'text-red-600 dark:text-red-400'
+							}
+						`}
+					>
+						{formatCurrency(Math.abs(amount))}
+					</p>
+				</div>
 
-                            <p className='text-slate-600 dark:text-slate-300 mb-4'>
-                                Cette action est irréversible. Voulez-vous vraiment supprimer cette transaction ?
-                            </p>
+				<button
+					type="button"
+					onClick={() => setShowActions(!showActions)}
+					className="
+						shrink-0 p-2 -mr-2
+						rounded-xl
+						text-secondary-400 dark:text-secondary-500
+						hover:text-secondary-600 dark:hover:text-secondary-300
+						hover:bg-secondary-100/50 dark:hover:bg-secondary-700/50
+						transition-colors
+						active:scale-95
+					"
+					aria-label="Plus d'actions"
+					aria-expanded={showActions}
+				>
+					<MoreHorizontal size={18} />
+				</button>
+			</div>
 
-                            <div className='w-full p-3 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                                <p className='font-medium text-slate-900 dark:text-white'>{description}</p>
-                                <div className='flex items-center justify-center gap-2 mt-1 text-sm text-slate-500 dark:text-slate-400'>
-                                    <span>{formatDate(date)}</span>
-                                    <span>•</span>
-                                    <span className={amount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
-                                        {amount >= 0 ? '+' : ''}{formatCurrency(amount)}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+			{showActions && (
+				<div className="px-4 pb-4 pt-0 flex gap-2 animate-fade-in">
+					<Button
+						variant="secondary"
+						size="sm"
+						className="flex-1"
+						onClick={() => {
+							onEdit?.(id);
+							setShowActions(false);
+						}}
+						icon={<SquarePen size={16} />}
+					>
+						Modifier
+					</Button>
+					<Button
+						variant="danger"
+						size="sm"
+						className="flex-1"
+						onClick={() => {
+							onRequestDelete?.({ id, amount, description, category, date, status });
+							setShowActions(false);
+						}}
+						icon={<Trash2 size={16} />}
+					>
+						Supprimer
+					</Button>
+				</div>
+			)}
+		</li>
+	);
+};
 
-                        <div className='grid grid-cols-2 gap-3 mt-6'>
-                            <Button
-                                variant='secondary'
-                                onClick={() => setShowDeleteConfirmation(false)}
-                            >Annuler</Button>
-
-                            <Button
-                                variant='danger'
-                                onClick={() => onDelete?.(id)}
-                            >Supprimer</Button>
-                        </div>
-                    </Modal>
-                )}
-            </div>
-        </li>
-    );
-}
-export default TransactionItem
+export default TransactionItem;
