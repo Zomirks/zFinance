@@ -13,7 +13,7 @@ function AddTransactionButton({ onClick }) {
 					hover:shadow-primary-500/40 hover:scale-105
 					active:scale-95
 					w-14 h-14 xs:w-auto xs:h-auto xs:rounded-xl
-					p-0 xs:px-6 xs:py-3
+					p-0! xs:px-6! xs:py-3!
 				"
 				aria-label="Ajouter une transaction"
 			>
