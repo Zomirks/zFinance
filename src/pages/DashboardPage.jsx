@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // Components - Features
 import AddTransactionButton from '../components/features/AddTransactionButton';
@@ -45,8 +45,28 @@ function DashboardPage() {
 		if (result) setEditingTransaction(null);
 	};
 
+	if (loading) {
+		return (
+			<main className="max-w-4xl mx-auto px-4 xs:px-6 py-6 xs:py-8 space-y-6">
+				<div className="h-46 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-2xl animate-pulse" />
+				<div className="grid grid-cols-1 xs:grid-cols-2 gap-4">
+					{[...Array(2)].map((_, i) => (
+						<div key={i} className="h-28 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-2xl animate-pulse" />
+					))}
+				</div>
+				<div className='h-96 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-2xl animate-pulse'/>
+			</main>
+		);
+	}
+
 	return (
 		<main className="max-w-4xl mx-auto px-4 xs:px-6 py-6 xs:py-8 pb-24 space-y-6">
+			{error && (
+				<div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-xl">
+					<p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
+				</div>
+			)}
+
 			<SummaryCards
 				transactions={transactions}
 				previousMonthBalance={PREVIOUS_MONTH_BALANCE}
