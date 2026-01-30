@@ -15,8 +15,8 @@ const EvolutionBadge = ({ evoPourcent, evoAmount, isBetter }) => {
 				inline-flex items-center gap-1.5 px-3 py-1.5
 				rounded-full text-sm font-medium mt-3 cursor-pointer select-none
 				${isBetter
-					? 'bg-primary-500/20 text-primary-100'
-					: 'bg-red-500/30 text-red-100'
+					? 'bg-primary-500/20 text-primary-500 dark:text-primary-100'
+					: 'bg-red-500/30 text-red-500 dark:text-red-100'
 				}
 			`}
 			onClick={() => setShowPourcentage(!showPourcentage)}
@@ -34,7 +34,7 @@ const EvolutionBadge = ({ evoPourcent, evoAmount, isBetter }) => {
 					formatCurrency(evoAmount)
 				)}
 			</span>
-			<span className="text-white/60 text-xs">vs mois dernier</span>
+			<span className="text-slate-950/60 dark:text-white/60 text-xs">vs mois dernier</span>
 		</div>
 	);
 };
