@@ -121,6 +121,7 @@ export const transactionsApi = {
             category: data.category,
             date: data.date || new Date().toISOString().split('T')[0],
             status: data.status || 'completed',
+            type: data.type || (Number(data.amount) >= 0 ? 'income' : 'expense'),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
