@@ -57,8 +57,18 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 		return Object.keys(newErrors).length === 0;
 	};
 
+	/**
+	 * Sanitize user input to prevent XSS attacks
+	 * Removes HTML tags, entities, and dangerous characters
+	 */
 	const sanitizeString = (str) => {
-		return str.trim().replace(/[<>]/g, '').slice(0, 200);
+		return str
+			.trim()
+			.replace(/[<>]/g, '')                    // Remove HTML brackets
+			.replace(/&[#\w]+;/gi, '')               // Remove HTML entities (&lt; &#60; etc.)
+			.replace(/javascript:/gi, '')            // Remove javascript: protocol
+			.replace(/on\w+\s*=/gi, '')              // Remove event handlers (onclick=, etc.)
+			.slice(0, 200);
 	};
 
 	const handleSubmit = (e) => {
