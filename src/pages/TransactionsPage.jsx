@@ -12,23 +12,23 @@ import TransactionModal from '../components/features/TransactionModal';
 import { Card, Button } from '../components/ui';
 
 // Hooks
-import useLocalStorage from '../hooks/useLocalStorage';
+import { useTransactions } from '../hooks/useTransactions';
 
 function TransactionsPage() {
-	const [transactions, setTransactions] = useLocalStorage('transactions', []);
+	const { transactions, loading, error, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
 	const [search, setSearch] = useState('');
 	const [showTransactionModal, setShowTransactionModal] = useState(false);
 	const [editingTransaction, setEditingTransaction] = useState(null);
 	const [deletingTransaction, setDeletingTransaction] = useState(null);
 
-	const handleAddTransaction = (newTransaction) => {
-		setTransactions(prev => [...prev, newTransaction]);
-		setShowTransactionModal(false);
+	const handleAddTransaction = async (newTransaction) => {
+		const result = await addTransaction(newTransaction);
+		if(result) setShowTransactionModal(false);
 	};
 
-	const handleDeleteTransaction = (id) => {
-		setTransactions(prev => prev.filter(t => t.id !== id));
-		setDeletingTransaction(null);
+	const handleDeleteTransaction = async (id) => {
+		const result = await deleteTransaction(id);
+		if (result) setDeletingTransaction(null);
 	};
 
 	const handleEditTransaction = (id) => {
@@ -38,11 +38,9 @@ function TransactionsPage() {
 		}
 	};
 
-	const handleUpdateTransaction = (updatedTransaction) => {
-		setTransactions(prev => prev.map(t =>
-			t.id === updatedTransaction.id ? updatedTransaction : t
-		));
-		setEditingTransaction(null);
+	const handleUpdateTransaction = async (updatedTransaction) => {
+		const result = await updateTransaction(updatedTransaction);
+		if (result) setEditingTransaction(null);
 	};
 
 	const filteredTransactions = transactions.filter(t =>

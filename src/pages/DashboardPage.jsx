@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Components - Features
 import AddTransactionButton from '../components/features/AddTransactionButton';
@@ -8,29 +8,29 @@ import TransactionList from '../components/features/TransactionList';
 import TransactionModal from '../components/features/TransactionModal';
 
 // Components - UI
-import { Button, Card } from '../components/ui';
+import { Card } from '../components/ui';
 
 // Hooks
-import useLocalStorage from '../hooks/useLocalStorage';
+import { useTransactions } from '../hooks/useTransactions';
 
 // Variables
 const RECENT_TRANSACTIONS_LIMIT = 5;
 const PREVIOUS_MONTH_BALANCE = 2600;
 
 function DashboardPage() {
-	const [transactions, setTransactions] = useLocalStorage('transactions', []);
+	const { transactions, loading, error, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
 	const [showTransactionModal, setShowTransactionModal] = useState(false);
 	const [editingTransaction, setEditingTransaction] = useState(null);
 	const [deletingTransaction, setDeletingTransaction] = useState(null);
 
-	const handleAddTransaction = (newTransaction) => {
-		setTransactions(prev => [...prev, newTransaction]);
-		setShowTransactionModal(false);
+	const handleAddTransaction = async (newTransaction) => {
+		const result = await addTransaction(newTransaction);
+		if(result) setShowTransactionModal(false);
 	};
 
-	const handleDeleteTransaction = (id) => {
-		setTransactions(prev => prev.filter(t => t.id !== id));
-		setDeletingTransaction(null);
+	const handleDeleteTransaction = async (id) => {
+		const result = await deleteTransaction(id);
+		if (result) setDeletingTransaction(null);
 	};
 
 	const handleEditTransaction = (id) => {
@@ -40,11 +40,9 @@ function DashboardPage() {
 		}
 	};
 
-	const handleUpdateTransaction = (updatedTransaction) => {
-		setTransactions(prev => prev.map(t =>
-			t.id === updatedTransaction.id ? updatedTransaction : t
-		));
-		setEditingTransaction(null);
+	const handleUpdateTransaction = async (updatedTransaction) => {
+		const result = await updateTransaction(updatedTransaction);
+		if (result) setEditingTransaction(null);
 	};
 
 	return (
