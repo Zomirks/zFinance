@@ -48,7 +48,8 @@ export const TransactionsProvider = ({ children }) => {
 	const updateTransaction = useCallback(async (transactionData) => {
 		try {
 			setError(null);
-			const updatedTransaction = await transactionsApi.update(transactionData.id, transactionData);
+			const { id, ...updates } = transactionData;
+			const updatedTransaction = await transactionsApi.update(id, updates);
 			setTransactions(prev => prev.map(t =>
 				t.id === updatedTransaction.id ? updatedTransaction : t
 			));
@@ -71,6 +72,57 @@ export const TransactionsProvider = ({ children }) => {
 		}
 	}, []);
 
+	const stats = useMemo(() => {
+		const now = new Date();
+		const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+		const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+		const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+		const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+		let balance = 0;
+		let expenseLastMonth = 0;
+		let expenseCurrentMonth = 0;
+		let expenseTotal = 0;
+		let incomeLastMonth = 0;
+		let incomeCurrentMonth = 0;
+		let incomeTotal = 0;
+
+		for (const t of transactions) {
+			const amount = t?.amount ?? 0;
+			const absAmount = Math.abs(amount);
+			balance += amount;
+
+			const transactionDate = new Date(t.date);
+			const isLastMonth = transactionDate >= startOfLastMonth && transactionDate <= endOfLastMonth;
+			const isCurrentMonth = transactionDate >= startOfCurrentMonth && transactionDate <= endOfCurrentMonth;
+
+			if (t.type === 'expense') {
+				expenseTotal += absAmount;
+				if (isLastMonth) expenseLastMonth += absAmount;
+				if (isCurrentMonth) expenseCurrentMonth += absAmount;
+			} else if (t.type === 'income') {
+				incomeTotal += absAmount;
+				if (isLastMonth) incomeLastMonth += absAmount;
+				if (isCurrentMonth) incomeCurrentMonth += absAmount;
+			}
+		}
+
+		return {
+			balance,
+			count: transactions.length,
+			expense: {
+				lastMonth: expenseLastMonth,
+				currentMonth: expenseCurrentMonth,
+				total: expenseTotal
+			},
+			income: {
+				lastMonth: incomeLastMonth,
+				currentMonth: incomeCurrentMonth,
+				total: incomeTotal
+			}
+		};
+	}, [transactions]);
+
 	useEffect(() => {
 		loadTransactions();
 	}, [loadTransactions]);
@@ -79,11 +131,12 @@ export const TransactionsProvider = ({ children }) => {
 		transactions,
 		loading,
 		error,
+		stats,
 		addTransaction,
 		updateTransaction,
 		deleteTransaction,
 		refresh: loadTransactions,
-	}), [transactions, loading, error, addTransaction, updateTransaction, deleteTransaction, loadTransactions]);
+	}), [transactions, loading, error, stats, addTransaction, updateTransaction, deleteTransaction, loadTransactions]);
 
 	return (
 		<TransactionsContext.Provider value={value}>

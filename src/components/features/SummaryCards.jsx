@@ -1,24 +1,37 @@
-import { Card } from '../ui';
+import { Card, EvolutionBadge } from '../ui';
 import { formatCurrency, formatDate } from '../../utils/formatters';
-import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
-const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
-	const balance = transactions.reduce((sum, t) => sum + (t?.amount ?? 0), 0);
-	const income = transactions
-		.filter(t => (t?.amount ?? 0) > 0)
-		.reduce((sum, t) => sum + (t?.amount ?? 0), 0);
-	const expense = transactions
-		.filter(t => (t?.amount ?? 0) < 0)
-		.reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+// Hooks
+import { useTransactions } from '../../hooks/useTransactions';
 
-	const evolution = previousMonthBalance !== 0
-		? (balance * 100 / previousMonthBalance - 100)
+const SummaryCards = () => {
+	const { stats } = useTransactions();
+	const balance = stats.balance;
+	const income = stats.income.total;
+	const expense = stats.expense.total;
+
+	const expenseEvoPourcent = stats.expense.lastMonth !== 0
+		? (stats.expense.currentMonth * 100 / stats.expense.lastMonth - 100)
 		: 0;
 
-	const isPositiveEvolution = evolution >= 0;
+	const expenseEvoAmount = stats.expense.lastMonth !== 0
+		? (stats.expense.currentMonth - stats.expense.lastMonth)
+		: 0;
+
+	const incomeEvoPourcent = stats.income.lastMonth !== 0
+		? (stats.income.currentMonth * 100 / stats.income.lastMonth - 100)
+		: 0;
+
+	const incomeEvoAmount = stats.income.lastMonth !== 0
+		? (stats.income.currentMonth - stats.income.lastMonth)
+		: 0;
+
+	const isBetterExpense = expenseEvoAmount <= 0;
+	const isBetterIncome = incomeEvoAmount >= 0;
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-6">
 			<div
 				className="
 					relative overflow-hidden
@@ -31,7 +44,7 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 				<div className="absolute -top-12 -right-12 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
 				<div className="absolute -bottom-8 -left-8 w-32 h-32 bg-primary-400/20 rounded-full blur-xl" />
 
-				<div className="absolute bottom-4 right-4 xs:bottom-6 xs:right-6 flex flex-col items-center text-white/30 pointer-events-none">
+				<div className="absolute bottom-2 right-4 xs:right-6 flex flex-col items-center text-white/30 pointer-events-none">
 					<span className="font-black text-7xl xs:text-8xl leading-none">
 						{formatDate(new Date(), '', { day: 'numeric' })}
 					</span>
@@ -48,28 +61,9 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 						</p>
 					</div>
 
-					<p className="text-3xl xs:text-4xl sm:text-5xl font-bold text-white mb-3">
+					<p className="text-3xl xs:text-4xl sm:text-5xl font-bold text-white">
 						{formatCurrency(balance)}
 					</p>
-
-					<div
-						className={`
-							inline-flex items-center gap-1.5 px-3 py-1.5
-							rounded-full text-sm font-medium
-							${isPositiveEvolution
-								? 'bg-white/20 text-white'
-								: 'bg-red-500/30 text-red-100'
-							}
-						`}
-					>
-						{isPositiveEvolution ? (
-							<TrendingUp size={16} />
-						) : (
-							<TrendingDown size={16} />
-						)}
-						<span>{isPositiveEvolution ? '+' : ''}{evolution.toFixed(1)}%</span>
-						<span className="text-white/60 text-xs">vs mois dernier</span>
-					</div>
 				</div>
 			</div>
 
@@ -86,6 +80,12 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
 						{formatCurrency(income)}
 					</p>
+					
+					<EvolutionBadge
+						evoPourcent={incomeEvoPourcent}
+						evoAmount={incomeEvoAmount}
+						isBetter={!isBetterIncome}
+					/>
 				</Card>
 
 				<Card className="p-4! xs:p-5!" animate={true}>
@@ -98,8 +98,14 @@ const SummaryCards = ({ transactions = [], previousMonthBalance = 0 }) => {
 						</div>
 					</div>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-						{formatCurrency(Math.abs(expense))}
+						{formatCurrency(expense)}
 					</p>
+
+					<EvolutionBadge
+						evoPourcent={expenseEvoPourcent}
+						evoAmount={expenseEvoAmount}
+						isBetter={isBetterExpense}
+					/>
 				</Card>
 			</div>
 		</div>

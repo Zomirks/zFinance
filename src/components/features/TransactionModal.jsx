@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { v7 as uuidv7 } from 'uuid';
 import { Calendar1, ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { Button, Modal } from '../ui';
 
@@ -78,7 +77,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 
 		const newTransaction = {
 			...formData,
-			id: transaction?.id || uuidv7(),
+			...(transaction?.id && { id: transaction.id }),
 			description: sanitizeString(formData.description),
 			amount: formData.type === 'expense'
 				? -Math.abs(parseFloat(formData.amount))

@@ -144,9 +144,11 @@ export const transactionsApi = {
             throw new Error(`Transaction non trouvée: ${id}`);
         }
 
+        const amount = updates.amount ?? transactions[index].amount;
         const updatedTransaction = {
             ...transactions[index],
             ...updates,
+            type: updates.type || transactions[index].type || (Number(amount) >= 0 ? 'income' : 'expense'),
             id: transactions[index].id,
             createdAt: transactions[index].createdAt,
             updatedAt: new Date().toISOString(),

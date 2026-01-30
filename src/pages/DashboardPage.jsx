@@ -15,7 +15,6 @@ import { useTransactions } from '../hooks/useTransactions';
 
 // Variables
 const RECENT_TRANSACTIONS_LIMIT = 5;
-const PREVIOUS_MONTH_BALANCE = 2600;
 
 function DashboardPage() {
 	const { transactions, loading, error, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
@@ -67,10 +66,7 @@ function DashboardPage() {
 				</div>
 			)}
 
-			<SummaryCards
-				transactions={transactions}
-				previousMonthBalance={PREVIOUS_MONTH_BALANCE}
-			/>
+			<SummaryCards />
 
 			<Card title="Dernières transactions">
 				<TransactionList
