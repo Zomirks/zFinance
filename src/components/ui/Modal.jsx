@@ -74,6 +74,7 @@ const Modal = ({ children, title, onClose }) => {
 							hover:bg-secondary-100/50 dark:hover:bg-secondary-700/50
 							transition-colors
 							focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500
+							cursor-pointer
 						"
 						aria-label="Fermer"
 						onClick={handleClose}

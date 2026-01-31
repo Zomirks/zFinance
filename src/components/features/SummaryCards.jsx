@@ -30,6 +30,16 @@ const SummaryCards = () => {
 	const isBetterExpense = expenseEvoAmount <= 0;
 	const isBetterIncome = incomeEvoAmount >= 0;
 
+	const ArrowDown =
+		<div className="p-1.5 rounded-lg bg-danger-light/80 dark:bg-red-900/30">
+			<ArrowDownRight className="text-red-600 dark:text-red-400 size-6 xs:size-4" />
+		</div>
+
+	const ArrowUp =
+		<div className="p-1.5 rounded-lg bg-primary-100/80 dark:bg-primary-900/30">
+			<ArrowUpRight className="text-primary-600 dark:text-primary-400 size-6 xs:size-4" />
+		</div>
+
 	return (
 		<div className="space-y-6">
 			<div
@@ -57,7 +67,7 @@ const SummaryCards = () => {
 					<div className="flex items-center justify-center xs:justify-start gap-2 mb-2">
 						<Wallet size={18} className="text-primary-200" />
 						<p className="text-primary-100 text-sm font-medium uppercase tracking-wide">
-							Solde actuel
+							Solde actuel total
 						</p>
 					</div>
 
@@ -68,15 +78,7 @@ const SummaryCards = () => {
 			</div>
 
 			<div className="grid grid-cols-2 gap-3 xs:gap-4">
-				<Card className="p-4! xs:p-5!" animate={true}>
-					<div className="flex items-start justify-between mb-2">
-						<span className="text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase tracking-wide">
-							Revenus
-						</span>
-						<div className="p-1.5 rounded-lg bg-primary-100/80 dark:bg-primary-900/30">
-							<ArrowUpRight className="text-primary-600 dark:text-primary-400 size-6 xs:size-4" />
-						</div>
-					</div>
+				<Card title='Revenus' rightElement={ArrowUp}>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
 						{formatCurrency(income)}
 					</p>
@@ -88,15 +90,7 @@ const SummaryCards = () => {
 					/>
 				</Card>
 
-				<Card className="p-4! xs:p-5!" animate={true}>
-					<div className="flex items-start justify-between mb-2">
-						<span className="text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase tracking-wide">
-							Dépenses
-						</span>
-						<div className="p-1.5 rounded-lg bg-danger-light/80 dark:bg-red-900/30">
-							<ArrowDownRight className="text-red-600 dark:text-red-400 size-6 xs:size-4" />
-						</div>
-					</div>
+				<Card title='Dépenses' rightElement={ArrowDown}>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
 						{formatCurrency(expense)}
 					</p>
@@ -106,6 +100,18 @@ const SummaryCards = () => {
 						evoAmount={expenseEvoAmount}
 						isBetter={isBetterExpense}
 					/>
+				</Card>
+
+				<Card title='Solde du mois actuel'>
+					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
+						{formatCurrency(stats.income.currentMonth - stats.expense.currentMonth)}
+					</p>
+				</Card>
+
+				<Card title='Performance du mois dernier'>
+					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
+						{formatCurrency(stats.income.lastMonth - stats.expense.lastMonth)}
+					</p>
 				</Card>
 			</div>
 		</div>
