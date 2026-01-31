@@ -1,3 +1,5 @@
+import { v7 as uuidv7 } from 'uuid';
+
 const categories = ['Salaire', 'Courses', 'Abonnements', 'Transport', 'Autres', 'Loisirs', 'Santé', 'Remboursement'];
 const statuses = ['completed', 'pending', 'failed'];
 
@@ -31,7 +33,7 @@ function randomDescription(category) {
 const mockTransactions = Array.from({ length: 20 }, () => {
     const category = categories[Math.floor(Math.random() * categories.length)];
     return {
-        id: crypto.randomUUID(),
+        id: uuidv7(),
         amount: randomAmount(category),
         description: randomDescription(category),
         category,

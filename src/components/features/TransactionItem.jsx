@@ -24,7 +24,9 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 			"
 			style={style}
 		>
-			<div className="p-4 flex items-center gap-3">
+			<div className="p-4 flex items-center gap-3 cursor-pointer"
+				onClick={() => setShowActions(!showActions)}
+			>
 				<div
 					className={`
 						shrink-0 w-12 h-12 rounded-xl
@@ -50,7 +52,7 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-2 mb-0.5">
-						<p className="font-medium text-secondary-900 dark:text-secondary-100 truncate">
+						<p className="font-medium text-secondary-900 dark:text-secondary-100 truncate select-none">
 							{description}
 						</p>
 						{isPending ? (
@@ -91,15 +93,13 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 
 				<button
 					type="button"
-					onClick={() => setShowActions(!showActions)}
 					className="
-						shrink-0 p-2 -mr-2
-						rounded-xl
+						shrink-0 p-2 -mr-2 rounded-xl
 						text-secondary-400 dark:text-secondary-500
 						hover:text-secondary-600 dark:hover:text-secondary-300
 						hover:bg-secondary-100/50 dark:hover:bg-secondary-700/50
 						transition-colors
-						active:scale-95
+						active:scale-95 cursor-pointer
 					"
 					aria-label="Plus d'actions"
 					aria-expanded={showActions}

@@ -42,7 +42,7 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between mb-4">
-				<div className="flex gap-2 pb-1 -mx-1 px-1 scrollbar-hide">
+				<div className="flex gap-2 scrollbar-hide">
 					{FILTER_BUTTONS.map(({ key, label }) => (
 						<Button
 							key={key}
@@ -59,7 +59,7 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 				{limit && (
 					<Link to="/transactions">
 						<Button variant="ghost" size="sm" className="gap-1 -ml-2">
-							Voir tout
+							<span className='hidden xs:block'>Voir tout</span>
 							<ArrowRight size={16} />
 						</Button>
 					</Link>

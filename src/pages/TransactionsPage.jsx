@@ -12,23 +12,23 @@ import TransactionModal from '../components/features/TransactionModal';
 import { Card, Button } from '../components/ui';
 
 // Hooks
-import useLocalStorage from '../hooks/useLocalStorage';
+import { useTransactions } from '../hooks/useTransactions';
 
 function TransactionsPage() {
-	const [transactions, setTransactions] = useLocalStorage('transactions', []);
+	const { transactions, loading, error, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
 	const [search, setSearch] = useState('');
 	const [showTransactionModal, setShowTransactionModal] = useState(false);
 	const [editingTransaction, setEditingTransaction] = useState(null);
 	const [deletingTransaction, setDeletingTransaction] = useState(null);
 
-	const handleAddTransaction = (newTransaction) => {
-		setTransactions(prev => [...prev, newTransaction]);
-		setShowTransactionModal(false);
+	const handleAddTransaction = async (newTransaction) => {
+		const result = await addTransaction(newTransaction);
+		if(result) setShowTransactionModal(false);
 	};
 
-	const handleDeleteTransaction = (id) => {
-		setTransactions(prev => prev.filter(t => t.id !== id));
-		setDeletingTransaction(null);
+	const handleDeleteTransaction = async (id) => {
+		const result = await deleteTransaction(id);
+		if (result) setDeletingTransaction(null);
 	};
 
 	const handleEditTransaction = (id) => {
@@ -38,11 +38,9 @@ function TransactionsPage() {
 		}
 	};
 
-	const handleUpdateTransaction = (updatedTransaction) => {
-		setTransactions(prev => prev.map(t =>
-			t.id === updatedTransaction.id ? updatedTransaction : t
-		));
-		setEditingTransaction(null);
+	const handleUpdateTransaction = async (updatedTransaction) => {
+		const result = await updateTransaction(updatedTransaction);
+		if (result) setEditingTransaction(null);
 	};
 
 	const filteredTransactions = transactions.filter(t =>
@@ -50,8 +48,23 @@ function TransactionsPage() {
 		t?.category?.toLowerCase().includes(search.toLowerCase())
 	);
 
+	if (loading) {
+		return (
+			<main className="max-w-4xl mx-auto px-4 xs:px-6 py-6 xs:py-8 space-y-6">
+				<div className="h-10 w-48 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-xl animate-pulse" />
+				<div className="h-96 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-2xl animate-pulse" />
+			</main>
+		);
+	}
+
 	return (
 		<main className="max-w-4xl mx-auto px-4 xs:px-6 py-6 xs:py-8 pb-24 space-y-6">
+			{error && (
+				<div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-xl">
+					<p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
+				</div>
+			)}
+
 			<div className="flex items-center gap-3">
 				<Link to="/">
 					<Button variant="ghost" size="icon" aria-label="Retour">
@@ -65,12 +78,17 @@ function TransactionsPage() {
 
 			<Card>
 				<div className="relative mb-5">
+					<label htmlFor="transaction-search" className="sr-only">
+						Rechercher une transaction
+					</label>
 					<Search
 						size={18}
 						className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-secondary-500"
+						aria-hidden="true"
 					/>
 					<input
 						type="text"
+						id="transaction-search"
 						placeholder="Rechercher une transaction..."
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}

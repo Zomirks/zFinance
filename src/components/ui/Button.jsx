@@ -23,6 +23,7 @@ const Button = ({
 		primary: `
 			bg-primary-500/90 dark:bg-primary-600/90
 			text-white
+			border border-primary-200/50 dark:border-primary-700/50
 			shadow-md shadow-primary-500/25 dark:shadow-primary-900/30
 			hover:bg-primary-600 dark:hover:bg-primary-500
 			hover:shadow-lg hover:shadow-primary-500/30
