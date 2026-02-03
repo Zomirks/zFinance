@@ -7,6 +7,7 @@ const CATEGORIES = {
 	expense: ['Courses', 'Transport', 'Logement', 'Loisirs', 'Santé', 'Autres'],
 };
 
+
 function TransactionModal({ onSubmit, onClose, transaction = null }) {
 	const dateInputRef = useRef(null);
 	const isEditMode = !!transaction;
@@ -19,6 +20,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 				category: transaction.category || '',
 				description: transaction.description || '',
 				date: transaction.date || new Date().toISOString().split('T')[0],
+				status: transaction.status || 'completed',
 			};
 		}
 		return {
@@ -27,6 +29,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 			category: '',
 			description: '',
 			date: new Date().toISOString().split('T')[0],
+			status: 'completed',
 		};
 	});
 
@@ -82,7 +85,6 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 			amount: formData.type === 'expense'
 				? -Math.abs(parseFloat(formData.amount))
 				: Math.abs(parseFloat(formData.amount)),
-			status: transaction?.status || 'completed',
 		};
 
 		onSubmit?.(newTransaction);
@@ -94,6 +96,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 				category: '',
 				description: '',
 				date: new Date().toISOString().split('T')[0],
+				status: 'completed',
 			});
 		}
 	};
@@ -271,6 +274,56 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 						<p className="text-red-500 dark:text-red-400 text-sm">{errors.category}</p>
 					)}
 				</div>
+
+				<label
+					htmlFor="status-toggle"
+					className="
+						flex items-center justify-between gap-3
+						p-4
+						bg-white/50 dark:bg-secondary-800/50
+						backdrop-blur-sm
+						border border-secondary-200/50 dark:border-secondary-700/50
+						rounded-xl
+						cursor-pointer
+						transition-all
+						hover:border-secondary-300 dark:hover:border-secondary-600
+					"
+				>
+					<div className="flex flex-col">
+						<span className="text-sm font-medium text-secondary-700 dark:text-secondary-300">
+							Transaction en attente
+						</span>
+						<span className="text-xs text-secondary-400 dark:text-secondary-500">
+							{formData.status === 'pending' ? 'À valider ultérieurement' : 'Transaction validée'}
+						</span>
+					</div>
+					<div className="relative">
+						<input
+							type="checkbox"
+							id="status-toggle"
+							checked={formData.status === 'pending'}
+							onChange={(e) => updateField('status', e.target.checked ? 'pending' : 'completed')}
+							className="sr-only peer"
+						/>
+						<div className="
+							w-11 h-6
+							bg-secondary-200 dark:bg-secondary-700
+							peer-checked:bg-amber-500 dark:peer-checked:bg-amber-500
+							rounded-full
+							transition-colors
+							peer-focus:ring-2 peer-focus:ring-primary-500/50
+						" />
+						<div className="
+							absolute top-0.5 left-0.5
+							w-5 h-5
+							bg-white
+							rounded-full
+							shadow-sm
+							transition-transform
+							peer-checked:translate-x-5
+						" />
+					</div>
+				</label>
 
 				<div className="pt-2">
 					<Button
