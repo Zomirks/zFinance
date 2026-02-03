@@ -80,6 +80,7 @@ export const TransactionsProvider = ({ children }) => {
 		const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
 		let balance = 0;
+		let currentMonthBalance = 0;
 		let expenseLastMonth = 0;
 		let expenseCurrentMonth = 0;
 		let expenseTotal = 0;
@@ -107,8 +108,11 @@ export const TransactionsProvider = ({ children }) => {
 			}
 		}
 
+		currentMonthBalance = incomeCurrentMonth - expenseCurrentMonth;
+
 		return {
 			balance,
+			currentMonthBalance,
 			count: transactions.length,
 			expense: {
 				lastMonth: expenseLastMonth,

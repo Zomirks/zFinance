@@ -13,7 +13,7 @@ const EvolutionBadge = ({ evoPourcent, evoAmount, isBetter }) => {
 		<div
 			className={`
 				inline-flex items-center gap-1.5 px-3 py-1.5
-				rounded-full text-sm font-medium mt-3 cursor-pointer select-none
+				rounded-full text-sm font-medium cursor-pointer select-none
 				${isBetter
 					? 'bg-primary-500/30 text-primary-500 dark:text-primary-100 hover:bg-primary-500/40'
 					: 'bg-red-500/30 text-red-500 dark:text-red-100 hover:bg-red-500/40'

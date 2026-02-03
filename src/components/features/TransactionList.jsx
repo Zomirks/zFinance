@@ -57,11 +57,13 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 				</div>
 
 				{limit && (
-					<Link to="/transactions">
-						<Button variant="ghost" size="sm" className="gap-1 -ml-2">
-							<span className='hidden xs:block'>Voir tout</span>
-							<ArrowRight size={16} />
-						</Button>
+					<Link to="/transactions" className='
+					text-secondary-500 dark:text-secondary-400
+					hover:text-secondary-700 dark:hover:text-secondary-200
+					flex items-center justify-end gap-1.5 text-sm
+					transition-colors duration-200'>
+						<span className='hidden xs:block'>Voir tout</span>
+						<ArrowRight size={14} />
 					</Link>
 				)}
 			</div>

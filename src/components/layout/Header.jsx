@@ -37,10 +37,11 @@ const Header = () => {
 					<Link
 						className="
 							text-xl xs:text-2xl font-bold
+							flex items-center
 							bg-linear-to-r from-primary-500 to-accent-500
+							hover:from-primary-400 hover:to-accent-400
 							bg-clip-text text-transparent
 							tracking-tight
-							hover:from-primary-400 hover:to-accent-400
 							transition-all
 						"
 						to="/"

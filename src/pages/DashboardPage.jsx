@@ -49,7 +49,7 @@ function DashboardPage() {
 			<main className="max-w-4xl mx-auto px-4 xs:px-6 py-6 xs:py-8 space-y-6">
 				<div className="h-46 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-2xl animate-pulse" />
 				<div className="grid grid-cols-1 xs:grid-cols-2 gap-4">
-					{[...Array(2)].map((_, i) => (
+					{[...Array(4)].map((_, i) => (
 						<div key={i} className="h-28 bg-secondary-200/50 dark:bg-secondary-700/50 rounded-2xl animate-pulse" />
 					))}
 				</div>

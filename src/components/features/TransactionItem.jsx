@@ -29,7 +29,7 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 			>
 				<div
 					className={`
-						shrink-0 w-12 h-12 rounded-xl
+						shrink-0 size-8 xs:size-12 rounded-xl
 						flex items-center justify-center
 						${isIncome
 							? 'bg-primary-100/80 dark:bg-primary-900/30'
@@ -39,7 +39,7 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 				>
 					<span
 						className={`
-							text-lg font-bold
+							text-sm xs:text-lg font-bold
 							${isIncome
 								? 'text-primary-600 dark:text-primary-400'
 								: 'text-red-600 dark:text-red-400'
@@ -66,8 +66,8 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 						)}
 					</div>
 					<div className="flex items-center gap-2 text-xs text-secondary-500 dark:text-secondary-400">
-						<span className="truncate">{category}</span>
-						<span className="text-secondary-300 dark:text-secondary-600">•</span>
+						<span className="select-none truncate">{category}</span>
+						<span className="select-none text-secondary-300 dark:text-secondary-600">•</span>
 						<span>
 							{formatDate(date, '', {
 								day: 'numeric',
@@ -100,6 +100,7 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 						hover:bg-secondary-100/50 dark:hover:bg-secondary-700/50
 						transition-colors
 						active:scale-95 cursor-pointer
+						hidden xs:block
 					"
 					aria-label="Plus d'actions"
 					aria-expanded={showActions}

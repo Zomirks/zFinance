@@ -1,6 +1,6 @@
 import { Card, EvolutionBadge } from '../ui';
 import { formatCurrency, formatDate } from '../../utils/formatters';
-import { Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Wallet, ArrowUpRight, BanknoteArrowDown, BanknoteArrowUpIcon } from 'lucide-react';
 
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
@@ -8,8 +8,8 @@ import { useTransactions } from '../../hooks/useTransactions';
 const SummaryCards = () => {
 	const { stats } = useTransactions();
 	const balance = stats.balance;
-	const income = stats.income.total;
-	const expense = stats.expense.total;
+	const income = stats.income.currentMonth;
+	const expense = stats.expense.currentMonth;
 
 	const expenseEvoPourcent = stats.expense.lastMonth !== 0
 		? (stats.expense.currentMonth * 100 / stats.expense.lastMonth - 100)
@@ -30,14 +30,14 @@ const SummaryCards = () => {
 	const isBetterExpense = expenseEvoAmount <= 0;
 	const isBetterIncome = incomeEvoAmount >= 0;
 
-	const ArrowDown =
+	const expenseIcon =
 		<div className="p-1.5 rounded-lg bg-danger-light/80 dark:bg-red-900/30">
-			<ArrowDownRight className="text-red-600 dark:text-red-400 size-6 xs:size-4" />
+			<BanknoteArrowDown className="text-red-600 dark:text-red-400 size-6" />
 		</div>
 
-	const ArrowUp =
+	const incomeIcon =
 		<div className="p-1.5 rounded-lg bg-primary-100/80 dark:bg-primary-900/30">
-			<ArrowUpRight className="text-primary-600 dark:text-primary-400 size-6 xs:size-4" />
+			<BanknoteArrowUpIcon className="text-primary-600 dark:text-primary-400 size-6" />
 		</div>
 
 	return (
@@ -47,14 +47,14 @@ const SummaryCards = () => {
 					relative overflow-hidden
 					bg-linear-to-br from-primary-500 via-primary-600 to-primary-700
 					dark:from-primary-600 dark:via-primary-700 dark:to-primary-800
-					rounded-3xl p-6 xs:p-8
+					rounded-3xl p-8 xs:p-10
 					shadow-xl shadow-primary-500/20 dark:shadow-primary-900/30
 				"
 			>
 				<div className="absolute -top-12 -right-12 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
 				<div className="absolute -bottom-8 -left-8 w-32 h-32 bg-primary-400/20 rounded-full blur-xl" />
 
-				<div className="absolute bottom-2 right-4 xs:right-6 flex flex-col items-center text-white/30 pointer-events-none">
+				<div className="absolute top-1/2 -translate-y-1/2 right-4 xs:right-8 flex flex-col items-center text-white/30 pointer-events-none">
 					<span className="font-black text-7xl xs:text-8xl leading-none">
 						{formatDate(new Date(), '', { day: 'numeric' })}
 					</span>
@@ -78,37 +78,41 @@ const SummaryCards = () => {
 			</div>
 
 			<div className="grid grid-cols-2 gap-3 xs:gap-4">
-				<Card title='Revenus' rightElement={ArrowUp}>
-					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-						{formatCurrency(income)}
-					</p>
-					
-					<EvolutionBadge
-						evoPourcent={incomeEvoPourcent}
-						evoAmount={incomeEvoAmount}
-						isBetter={!isBetterIncome}
-					/>
+				<Card title='Revenus du mois' className='col-span-2 xs:col-span-1' rightElement={incomeIcon}>
+					<div className="flex items-center justify-between flex-wrap gap-2">
+						<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
+							{formatCurrency(income)}
+						</p>
+						
+						<EvolutionBadge
+							evoPourcent={incomeEvoPourcent}
+							evoAmount={incomeEvoAmount}
+							isBetter={isBetterIncome}
+							/>
+					</div>
 				</Card>
 
-				<Card title='Dépenses' rightElement={ArrowDown}>
-					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-						{formatCurrency(expense)}
-					</p>
+				<Card title='Dépenses du mois' className='col-span-2 xs:col-span-1' rightElement={expenseIcon}>
+					<div className="flex items-center justify-between flex-wrap gap-2">
+						<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
+							{formatCurrency(expense)}
+						</p>
 
-					<EvolutionBadge
-						evoPourcent={expenseEvoPourcent}
-						evoAmount={expenseEvoAmount}
-						isBetter={isBetterExpense}
-					/>
+						<EvolutionBadge
+							evoPourcent={expenseEvoPourcent}
+							evoAmount={expenseEvoAmount}
+							isBetter={isBetterExpense}
+							/>
+					</div>
 				</Card>
 
-				<Card title='Solde du mois actuel'>
+				<Card title='Bilan mensuel'>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-						{formatCurrency(stats.income.currentMonth - stats.expense.currentMonth)}
+						{formatCurrency(stats.currentMonthBalance)}
 					</p>
 				</Card>
 
-				<Card title='Performance du mois dernier'>
+				<Card title='Bilan mois précédent'>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
 						{formatCurrency(stats.income.lastMonth - stats.expense.lastMonth)}
 					</p>
