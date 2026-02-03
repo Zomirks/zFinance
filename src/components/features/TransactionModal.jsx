@@ -1,58 +1,80 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Calendar1, ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { Button, Modal } from '../ui';
+import { useTransactions } from '../../contexts/TransactionsContext';
 
 const CATEGORIES = {
-	income: ['Salaire', 'Freelance', 'Investissements', 'Autres'],
+	income: ['Salaire', 'Freelance', 'Investissements', 'Remboursements', 'Autres'],
 	expense: ['Courses', 'Transport', 'Logement', 'Loisirs', 'Santé', 'Autres'],
 };
 
 
-function TransactionModal({ onSubmit, onClose, transaction = null }) {
-	const dateInputRef = useRef(null);
-	const isEditMode = !!transaction;
+function TransactionModal() {
+	const {
+		isFormOpen,
+		editingTransaction,
+		closeForm,
+		addTransaction,
+		updateTransaction,
+	} = useTransactions();
 
-	const [formData, setFormData] = useState(() => {
-		if (transaction) {
-			return {
-				amount: Math.abs(transaction.amount).toString(),
-				type: transaction.amount >= 0 ? 'income' : 'expense',
-				category: transaction.category || '',
-				description: transaction.description || '',
-				date: transaction.date || new Date().toISOString().split('T')[0],
-				status: transaction.status || 'completed',
-			};
-		}
-		return {
-			amount: '',
-			type: 'expense',
-			category: '',
-			description: '',
-			date: new Date().toISOString().split('T')[0],
-			status: 'completed',
-		};
+	const dateInputRef = useRef(null);
+
+	const [formData, setFormData] = useState({
+		type: 'expense',
+		amount: '',
+		description: '',
+		category: '',
+		date: new Date().toISOString().split('T')[0],
 	});
 
 	const [errors, setErrors] = useState({});
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const updateField = (field, value) => {
-		setFormData(prev => ({ ...prev, [field]: value }));
+	useEffect(() => {
+		if (editingTransaction) {
+			setFormData({
+				type: editingTransaction.amount > 0 ? 'income' : 'expense',
+				amount: Math.abs(editingTransaction.amount).toString(),
+				description: editingTransaction.description,
+				category: editingTransaction.category,
+				date: editingTransaction.date,
+			});
+		} else {
+			setFormData({
+				type: 'expense',
+				amount: '',
+				description: '',
+				category: '',
+				date: new Date().toISOString().split('T')[0],
+			});
+		}
+		setErrors({});
+	}, [editingTransaction, isFormOpen]);
+
+	if (!isFormOpen) return null;
+	
+	const handleChange = (field, value) => {
+		setFormData((prev) => ({ ...prev, [field]: value }));
 		if (errors[field]) {
-			setErrors(prev => ({ ...prev, [field]: null }));
+			setErrors((prev) => ({ ...prev, [field]: null }));
 		}
 	};
 
 	const validate = () => {
 		const newErrors = {};
 
-		if (!formData.amount || parseFloat(formData.amount) <= 0) {
-			newErrors.amount = 'Le montant doit être supérieur à 0';
+		if (!formData.amount || isNaN(formData.amount) || Number(formData.amount) <= 0) {
+			newErrors.amount = 'Montant invalide';
 		}
 		if (!formData.category) {
 			newErrors.category = 'Veuillez sélectionner une catégorie';
 		}
 		if (!formData.description.trim()) {
 			newErrors.description = 'La description est requise';
+		}
+		if (!formData.date) {
+			newErrors.date = 'La date est requise';
 		}
 
 		setErrors(newErrors);
@@ -73,36 +95,37 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 			.slice(0, 200);
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		if (!validate()) return;
 
-		const newTransaction = {
-			...formData,
-			...(transaction?.id && { id: transaction.id }),
+		setIsSubmitting(true);
+
+		const amount = formData.type === 'expense'
+			? -Math.abs(Number(formData.amount))
+			: Math.abs(Number(formData.amount));
+
+		const transactionData = {
+			amount,
 			description: sanitizeString(formData.description),
-			amount: formData.type === 'expense'
-				? -Math.abs(parseFloat(formData.amount))
-				: Math.abs(parseFloat(formData.amount)),
+			category: formData.category,
+			date: formData.date,
 		};
 
-		onSubmit?.(newTransaction);
-
-		if (!isEditMode) {
-			setFormData({
-				amount: '',
-				type: 'expense',
-				category: '',
-				description: '',
-				date: new Date().toISOString().split('T')[0],
-				status: 'completed',
-			});
+		try {
+			if (editingTransaction) {
+				await updateTransaction(editingTransaction.id, transactionData);
+			} else {
+				await addTransaction(transactionData);
+			}
+		} catch (error) {
+			console.error('Erreur:', error);
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
 	const categories = CATEGORIES[formData.type];
-	const isValid = formData.amount && formData.category && formData.description.trim();
 
 	const inputStyles = `
 		w-full px-4 py-3
@@ -117,7 +140,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 	`;
 
 	return (
-		<Modal title={isEditMode ? 'Modifier la transaction' : 'Nouvelle transaction'} onClose={onClose}>
+		<Modal title={editingTransaction ? 'Modifier la transaction' : 'Nouvelle transaction'} onClose={closeForm}>
 			<form onSubmit={handleSubmit} className="space-y-5">
 				<div className="grid grid-cols-2 gap-2 p-1.5 bg-secondary-100/80 dark:bg-secondary-800/80 backdrop-blur-sm rounded-xl">
 					<label
@@ -138,10 +161,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							value="expense"
 							className="sr-only"
 							checked={formData.type === 'expense'}
-							onChange={(e) => {
-								updateField('type', e.target.value);
-								updateField('category', '');
-							}}
+							onChange={(e) => handleChange('type', e.target.value)}
 						/>
 						<ArrowDownLeft size={18} />
 						Dépense
@@ -164,10 +184,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							value="income"
 							className="sr-only"
 							checked={formData.type === 'income'}
-							onChange={(e) => {
-								updateField('type', e.target.value);
-								updateField('category', '');
-							}}
+							onChange={(e) => handleChange('type', e.target.value)}
 						/>
 						<ArrowUpRight size={18} />
 						Revenu
@@ -182,7 +199,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 						type="text"
 						id="description"
 						value={formData.description}
-						onChange={(e) => updateField('description', e.target.value)}
+						onChange={(e) => handleChange('description', e.target.value)}
 						placeholder="Ex: Course au supermarché"
 						className={inputStyles}
 					/>
@@ -203,7 +220,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							type="number"
 							id="amount"
 							value={formData.amount}
-							onChange={(e) => updateField('amount', e.target.value)}
+							onChange={(e) => handleChange('amount', e.target.value)}
 							placeholder="0.00"
 							min={0}
 							step="0.01"
@@ -226,7 +243,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							type="date"
 							id="date"
 							value={formData.date}
-							onChange={(e) => updateField('date', e.target.value)}
+							onChange={(e) => handleChange('date', e.target.value)}
 							className={`flex-1 ${inputStyles}`}
 						/>
 						<button
@@ -249,6 +266,9 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							<Calendar1 size={20} />
 						</button>
 					</div>
+					{errors.date && (
+						<p className="text-red-500 dark:text-red-400 text-sm">{errors.date}</p>
+					)}
 				</div>
 
 				<div className="space-y-2">
@@ -260,7 +280,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							name="category"
 							id="category"
 							value={formData.category}
-							onChange={(e) => updateField('category', e.target.value)}
+							onChange={(e) => handleChange('category', e.target.value)}
 							className={`${inputStyles} cursor-pointer appearance-none pr-10`}
 						>
 							<option value="" disabled>Sélectionner une catégorie</option>
@@ -302,7 +322,7 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 							type="checkbox"
 							id="status-toggle"
 							checked={formData.status === 'pending'}
-							onChange={(e) => updateField('status', e.target.checked ? 'pending' : 'completed')}
+							onChange={(e) => handleChange('status', e.target.checked ? 'pending' : 'completed')}
 							className="sr-only peer"
 						/>
 						<div className="
@@ -331,9 +351,9 @@ function TransactionModal({ onSubmit, onClose, transaction = null }) {
 						variant="primary"
 						size="lg"
 						className="w-full"
-						disabled={!isValid}
+						disabled={isSubmitting}
 					>
-						{isEditMode ? 'Modifier' : 'Ajouter la transaction'}
+						{isSubmitting ? 'Enregistrement...' : editingTransaction ? 'Modifier' : 'Ajouter une transaction'}
 					</Button>
 				</div>
 			</form>

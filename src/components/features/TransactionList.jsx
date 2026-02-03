@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { formatCurrency } from '../../utils/formatters';
 import TransactionItem from './TransactionItem';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { Button } from '../ui';
 import { ArrowRight, ArrowRightLeft } from 'lucide-react';
 
 import { Link } from 'react-router';
+import { useTransactions } from '../../contexts/TransactionsContext';
 
 const FILTER_BUTTONS = [
 	{ key: 'all', label: 'Toutes' },
@@ -12,8 +14,16 @@ const FILTER_BUTTONS = [
 	{ key: 'expense', label: 'Dépenses' },
 ];
 
-const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onEdit }) => {
+const TransactionList = ({ transactions = [], limit = null }) => {
 	const [filter, setFilter] = useState('all');
+	const {
+		openForm,
+		deleteTransaction,
+		isDeleteConfirmOpen,
+		transactionToDelete,
+		openDeleteConfirm,
+		closeDeleteConfirm,
+	} = useTransactions();
 
 	const filtered = useMemo(() => {
 		switch (filter) {
@@ -38,6 +48,11 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 	if (limit) {
 		lastTransactions = lastTransactions.slice(0, limit);
 	}
+
+	const handleConfirmDelete = async (id) => {
+		await deleteTransaction(id);
+		closeDeleteConfirm();
+	};
 
 	return (
 		<div className="space-y-4">
@@ -76,12 +91,12 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 					</div>
 
 					<ul className="space-y-2">
-						{lastTransactions.map((t, index) => (
+						{lastTransactions.map((transaction, index) => (
 							<TransactionItem
-								key={t.id}
-								{...t}
-								onRequestDelete={onRequestDelete}
-								onEdit={onEdit}
+								key={transaction.id}
+								transaction={transaction}
+								onEdit={() => openForm(transaction)}
+								onDelete={() => openDeleteConfirm(transaction)}
 								style={{ animationDelay: `${index * 50}ms` }}
 							/>
 						))}
@@ -103,6 +118,14 @@ const TransactionList = ({ transactions = [], limit = null, onRequestDelete, onE
 						Vos transactions apparaîtront ici
 					</p>
 				</div>
+			)}
+
+			{isDeleteConfirmOpen && (
+				<DeleteConfirmationModal
+					transaction={transactionToDelete}
+					onConfirm={handleConfirmDelete}
+					onClose={closeDeleteConfirm}
+				/>
 			)}
 		</div>
 	);

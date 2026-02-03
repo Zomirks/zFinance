@@ -4,7 +4,8 @@ import { Check, SquarePen, Trash2, MoreHorizontal } from 'lucide-react';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { Badge, Button } from '../ui';
 
-const TransactionItem = ({ id, amount, description, category, date, status, onRequestDelete, onEdit, style }) => {
+const TransactionItem = ({ transaction, onEdit, onDelete, style }) => {
+	const { id, amount, description, category, date, status } = transaction;
 	const isPending = status === 'pending';
 	const [showActions, setShowActions] = useState(false);
 
@@ -127,10 +128,7 @@ const TransactionItem = ({ id, amount, description, category, date, status, onRe
 						variant="danger"
 						size="sm"
 						className="flex-1"
-						onClick={() => {
-							onRequestDelete?.({ id, amount, description, category, date, status });
-							setShowActions(false);
-						}}
+						onClick={onDelete}
 						icon={<Trash2 size={16} />}
 					>
 						Supprimer

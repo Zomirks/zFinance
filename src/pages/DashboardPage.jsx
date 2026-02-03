@@ -1,8 +1,5 @@
-import { useState } from 'react';
-
 // Components - Features
 import AddTransactionButton from '../components/features/AddTransactionButton';
-import DeleteConfirmationModal from '../components/features/DeleteConfirmationModal';
 import SummaryCards from '../components/features/SummaryCards';
 import TransactionList from '../components/features/TransactionList';
 import TransactionModal from '../components/features/TransactionModal';
@@ -17,32 +14,7 @@ import { useTransactions } from '../hooks/useTransactions';
 const RECENT_TRANSACTIONS_LIMIT = 5;
 
 function DashboardPage() {
-	const { transactions, loading, error, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
-	const [showTransactionModal, setShowTransactionModal] = useState(false);
-	const [editingTransaction, setEditingTransaction] = useState(null);
-	const [deletingTransaction, setDeletingTransaction] = useState(null);
-
-	const handleAddTransaction = async (newTransaction) => {
-		const result = await addTransaction(newTransaction);
-		if(result) setShowTransactionModal(false);
-	};
-
-	const handleDeleteTransaction = async (id) => {
-		const result = await deleteTransaction(id);
-		if (result) setDeletingTransaction(null);
-	};
-
-	const handleEditTransaction = (id) => {
-		const transaction = transactions.find(t => t.id === id);
-		if (transaction) {
-			setEditingTransaction(transaction);
-		}
-	};
-
-	const handleUpdateTransaction = async (updatedTransaction) => {
-		const result = await updateTransaction(updatedTransaction);
-		if (result) setEditingTransaction(null);
-	};
+	const { openForm, filteredTransactions, error, loading } = useTransactions();
 
 	if (loading) {
 		return (
@@ -70,37 +42,14 @@ function DashboardPage() {
 
 			<Card title="Dernières transactions">
 				<TransactionList
-					transactions={transactions}
+					transactions={filteredTransactions}
 					limit={RECENT_TRANSACTIONS_LIMIT}
-					onRequestDelete={setDeletingTransaction}
-					onEdit={handleEditTransaction}
 				/>
 			</Card>
 
-			<AddTransactionButton onClick={() => setShowTransactionModal(true)} />
+			<AddTransactionButton onClick={() => openForm()} />
 
-			{showTransactionModal && (
-				<TransactionModal
-					onSubmit={handleAddTransaction}
-					onClose={() => setShowTransactionModal(false)}
-				/>
-			)}
-
-			{editingTransaction && (
-				<TransactionModal
-					transaction={editingTransaction}
-					onSubmit={handleUpdateTransaction}
-					onClose={() => setEditingTransaction(null)}
-				/>
-			)}
-
-			{deletingTransaction && (
-				<DeleteConfirmationModal
-					transaction={deletingTransaction}
-					onConfirm={handleDeleteTransaction}
-					onClose={() => setDeletingTransaction(null)}
-				/>
-			)}
+			<TransactionModal />
 		</main>
 	);
 }
