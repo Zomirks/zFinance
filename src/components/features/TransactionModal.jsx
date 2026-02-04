@@ -1,6 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
-import { Calendar1, ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
-import { Button, Modal } from '../ui';
+// React
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+
+// Components - UI
+import { Button, Input, Modal, Select } from '../ui';
+
+// Icons
+import { Calendar1, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+
+// Utils - formatters
 import { useTransactions } from '../../contexts/TransactionsContext';
 
 const CATEGORIES = {
@@ -8,6 +15,19 @@ const CATEGORIES = {
 	expense: ['Courses', 'Transport', 'Logement', 'Loisirs', 'Santé', 'Autres'],
 };
 
+/**
+ * Sanitize user input to prevent XSS attacks
+ * Removes HTML tags, entities, and dangerous characters
+ */
+const sanitizeString = (str) => {
+	return str
+		.trim()
+		.replace(/[<>]/g, '')                    // Remove HTML brackets
+		.replace(/&[#\w]+;/gi, '')               // Remove HTML entities (&lt; &#60; etc.)
+		.replace(/javascript:/gi, '')            // Remove javascript: protocol
+		.replace(/on\w+\s*=/gi, '')              // Remove event handlers (onclick=, etc.)
+		.slice(0, 200);
+};
 
 function TransactionModal() {
 	const {
@@ -17,7 +37,6 @@ function TransactionModal() {
 		addTransaction,
 		updateTransaction,
 	} = useTransactions();
-
 	const dateInputRef = useRef(null);
 
 	const [formData, setFormData] = useState({
@@ -27,6 +46,8 @@ function TransactionModal() {
 		category: '',
 		date: new Date().toISOString().split('T')[0],
 	});
+
+	const categories = useMemo(() => CATEGORIES[formData.type], [formData.type]);
 
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,16 +73,12 @@ function TransactionModal() {
 		setErrors({});
 	}, [editingTransaction, isFormOpen]);
 
-	if (!isFormOpen) return null;
-	
-	const handleChange = (field, value) => {
+	const handleChange = useCallback((field, value) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
-		if (errors[field]) {
-			setErrors((prev) => ({ ...prev, [field]: null }));
-		}
-	};
+		setErrors((prev) => ({ ...prev, [field]: null }));
+	}, []);
 
-	const validate = () => {
+	const validate = useCallback(() => {
 		const newErrors = {};
 
 		if (!formData.amount || isNaN(formData.amount) || Number(formData.amount) <= 0) {
@@ -79,21 +96,7 @@ function TransactionModal() {
 
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
-	};
-
-	/**
-	 * Sanitize user input to prevent XSS attacks
-	 * Removes HTML tags, entities, and dangerous characters
-	 */
-	const sanitizeString = (str) => {
-		return str
-			.trim()
-			.replace(/[<>]/g, '')                    // Remove HTML brackets
-			.replace(/&[#\w]+;/gi, '')               // Remove HTML entities (&lt; &#60; etc.)
-			.replace(/javascript:/gi, '')            // Remove javascript: protocol
-			.replace(/on\w+\s*=/gi, '')              // Remove event handlers (onclick=, etc.)
-			.slice(0, 200);
-	};
+	}, [formData]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -125,19 +128,7 @@ function TransactionModal() {
 		}
 	};
 
-	const categories = CATEGORIES[formData.type];
-
-	const inputStyles = `
-		w-full px-4 py-3
-		bg-white/50 dark:bg-secondary-800/50
-		backdrop-blur-sm
-		border border-secondary-200/50 dark:border-secondary-700/50
-		rounded-xl
-		text-secondary-900 dark:text-secondary-100
-		placeholder-secondary-400 dark:placeholder-secondary-500
-		focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500
-		transition-all
-	`;
+	if (!isFormOpen) return null;
 
 	return (
 		<Modal title={editingTransaction ? 'Modifier la transaction' : 'Nouvelle transaction'} onClose={closeForm}>
@@ -195,13 +186,12 @@ function TransactionModal() {
 					<label htmlFor="description" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Description
 					</label>
-					<input
-						type="text"
+					<Input
 						id="description"
 						value={formData.description}
 						onChange={(e) => handleChange('description', e.target.value)}
 						placeholder="Ex: Course au supermarché"
-						className={inputStyles}
+						error={!!errors.description}
 					/>
 					{errors.description && (
 						<p className="text-red-500 dark:text-red-400 text-sm">{errors.description}</p>
@@ -216,7 +206,7 @@ function TransactionModal() {
 						<span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-700 dark:text-secondary-500 font-medium z-1">
 							€
 						</span>
-						<input
+						<Input
 							type="number"
 							id="amount"
 							value={formData.amount}
@@ -225,7 +215,8 @@ function TransactionModal() {
 							min={0}
 							step="0.01"
 							inputMode="decimal"
-							className={`${inputStyles} pl-9`}
+							className="pl-9"
+							error={!!errors.amount}
 						/>
 					</div>
 					{errors.amount && (
@@ -238,13 +229,14 @@ function TransactionModal() {
 						Date
 					</label>
 					<div className="flex gap-2">
-						<input
+						<Input
 							ref={dateInputRef}
 							type="date"
 							id="date"
 							value={formData.date}
 							onChange={(e) => handleChange('date', e.target.value)}
-							className={`flex-1 ${inputStyles}`}
+							className="flex-1"
+							error={!!errors.date}
 						/>
 						<button
 							type="button"
@@ -275,21 +267,18 @@ function TransactionModal() {
 					<label htmlFor="category" className="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
 						Catégorie
 					</label>
-					<div className="relative">
-						<select
-							name="category"
-							id="category"
-							value={formData.category}
-							onChange={(e) => handleChange('category', e.target.value)}
-							className={`${inputStyles} cursor-pointer appearance-none pr-10`}
-						>
-							<option value="" disabled>Sélectionner une catégorie</option>
-							{categories.map((label) => (
-								<option key={label} value={label}>{label}</option>
-							))}
-						</select>
-						<ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
-					</div>
+					<Select
+						name="category"
+						id="category"
+						value={formData.category}
+						onChange={(e) => handleChange('category', e.target.value)}
+						error={!!errors.category}
+					>
+						<option value="" disabled>Sélectionner une catégorie</option>
+						{categories.map((label) => (
+							<option key={label} value={label}>{label}</option>
+						))}
+					</Select>
 					{errors.category && (
 						<p className="text-red-500 dark:text-red-400 text-sm">{errors.category}</p>
 					)}

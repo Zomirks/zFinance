@@ -1,12 +1,22 @@
+// React
 import { useState, useMemo } from 'react';
-import { formatCurrency } from '../../utils/formatters';
+import { Link } from 'react-router';
+
+// Components - Features
 import TransactionItem from './TransactionItem';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+
+// Components - UI
 import { Button } from '../ui';
+
+// Context
+import { useTransactions } from '../../contexts/TransactionsContext';
+
+// Icons
 import { ArrowRight, ArrowRightLeft } from 'lucide-react';
 
-import { Link } from 'react-router';
-import { useTransactions } from '../../contexts/TransactionsContext';
+// Utils - Formatters
+import { formatCurrency } from '../../utils/formatters';
 
 const FILTER_BUTTONS = [
 	{ key: 'all', label: 'Toutes' },
@@ -26,28 +36,27 @@ const TransactionList = ({ transactions = [], limit = null }) => {
 	} = useTransactions();
 
 	const filtered = useMemo(() => {
+		let result;
+
 		switch (filter) {
 			case 'income':
-				return transactions.filter(t => (t?.amount ?? 0) > 0);
+				result = transactions.filter(t => (t?.amount ?? 0) > 0);
+				break;
 			case 'expense':
-				return transactions.filter(t => (t?.amount ?? 0) < 0);
+				result = transactions.filter(t => (t?.amount ?? 0) < 0);
+				break;
 			default:
-				return transactions;
+				result = [...transactions];
 		}
-	}, [filter, transactions]);
+
+		result.sort((a, b) => new Date(b.date) - new Date(a.date));
+		return limit ? result.slice(0, limit) : result;
+	}, [filter, transactions, limit]);
 
 	const filteredTotal = useMemo(
 		() => formatCurrency(filtered.reduce((sum, t) => sum + (t?.amount ?? 0), 0)),
 		[filtered]
 	);
-
-	let lastTransactions = filtered.sort((a, b) => {
-		return new Date(b.date) - new Date(a.date);
-	});
-
-	if (limit) {
-		lastTransactions = lastTransactions.slice(0, limit);
-	}
 
 	const handleConfirmDelete = async (id) => {
 		await deleteTransaction(id);
@@ -83,15 +92,15 @@ const TransactionList = ({ transactions = [], limit = null }) => {
 				)}
 			</div>
 
-			{lastTransactions.length > 0 ? (
+			{filtered.length > 0 ? (
 				<>
 					<div className="flex items-center justify-between text-sm text-secondary-500 dark:text-secondary-400 px-1">
-						<p>{lastTransactions.length} transaction{lastTransactions.length > 1 ? 's' : ''}</p>
+						<p>{filtered.length} transaction{filtered.length > 1 ? 's' : ''}</p>
 						<p className="font-medium">Total : {filteredTotal}</p>
 					</div>
 
 					<ul className="space-y-2">
-						{lastTransactions.map((transaction, index) => (
+						{filtered.map((transaction, index) => (
 							<TransactionItem
 								key={transaction.id}
 								transaction={transaction}

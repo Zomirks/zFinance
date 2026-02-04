@@ -1,8 +1,14 @@
+// React
 import { useState } from 'react';
+
+// Components - UI
+import { Badge, Button } from '../ui';
+
+// Icons
 import { Check, SquarePen, Trash2, MoreHorizontal } from 'lucide-react';
 
+// Utils - Formatters
 import { formatCurrency, formatDate } from '../../utils/formatters';
-import { Badge, Button } from '../ui';
 
 const TransactionItem = ({ transaction, onEdit, onDelete, style }) => {
 	const { id, amount, description, category, date, status } = transaction;

@@ -1,9 +1,14 @@
+// Components - UI
 import { Card, EvolutionBadge } from '../ui';
-import { formatCurrency, formatDate } from '../../utils/formatters';
-import { Wallet, ArrowUpRight, BanknoteArrowDown, BanknoteArrowUpIcon } from 'lucide-react';
 
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
+
+// Icons
+import { Wallet, BanknoteArrowDown, BanknoteArrowUpIcon } from 'lucide-react';
+
+// Utils - Formatters
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 const SummaryCards = () => {
 	const { stats } = useTransactions();
