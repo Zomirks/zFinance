@@ -1,5 +1,5 @@
 // React
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 // Components - UI
 import { Badge, Button } from '../ui';
@@ -10,8 +10,8 @@ import { Check, SquarePen, Trash2, MoreHorizontal } from 'lucide-react';
 // Utils - Formatters
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
-const TransactionItem = ({ transaction, onEdit, onDelete, style }) => {
-	const { id, amount, description, category, date, status } = transaction;
+const TransactionItem = memo(function TransactionItem({ transaction, onEdit, onDelete, style }) {
+	const { amount, description, category, date, status } = transaction;
 	const isPending = status === 'pending';
 	const [showActions, setShowActions] = useState(false);
 
@@ -123,7 +123,7 @@ const TransactionItem = ({ transaction, onEdit, onDelete, style }) => {
 						size="sm"
 						className="flex-1"
 						onClick={() => {
-							onEdit?.(id);
+							onEdit?.(transaction);
 							setShowActions(false);
 						}}
 						icon={<SquarePen size={16} />}
@@ -134,7 +134,7 @@ const TransactionItem = ({ transaction, onEdit, onDelete, style }) => {
 						variant="danger"
 						size="sm"
 						className="flex-1"
-						onClick={onDelete}
+						onClick={() => onDelete?.(transaction)}
 						icon={<Trash2 size={16} />}
 					>
 						Supprimer
@@ -143,6 +143,6 @@ const TransactionItem = ({ transaction, onEdit, onDelete, style }) => {
 			)}
 		</li>
 	);
-};
+});
 
 export default TransactionItem;

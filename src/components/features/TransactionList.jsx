@@ -1,5 +1,5 @@
 // React
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router';
 
 // Components - Features
@@ -63,6 +63,14 @@ const TransactionList = ({ transactions = [], limit = null }) => {
 		closeDeleteConfirm();
 	};
 
+	const handleEdit = useCallback((transaction) => {
+		openForm(transaction);
+	}, [openForm]);
+
+	const handleDelete = useCallback((transaction) => {
+		openDeleteConfirm(transaction);
+	}, [openDeleteConfirm]);
+
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between mb-4">
@@ -104,8 +112,8 @@ const TransactionList = ({ transactions = [], limit = null }) => {
 							<TransactionItem
 								key={transaction.id}
 								transaction={transaction}
-								onEdit={() => openForm(transaction)}
-								onDelete={() => openDeleteConfirm(transaction)}
+								onEdit={handleEdit}
+								onDelete={handleDelete}
 								style={{ animationDelay: `${index * 50}ms` }}
 							/>
 						))}

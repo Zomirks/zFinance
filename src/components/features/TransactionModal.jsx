@@ -73,12 +73,12 @@ function TransactionModal() {
 		setErrors({});
 	}, [editingTransaction, isFormOpen]);
 
-	const handleChange = useCallback((field, value) => {
+	const handleChange = (field, value) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 		setErrors((prev) => ({ ...prev, [field]: null }));
-	}, []);
+	};
 
-	const validate = useCallback(() => {
+	const validate = () => {
 		const newErrors = {};
 
 		if (!formData.amount || isNaN(formData.amount) || Number(formData.amount) <= 0) {
@@ -96,7 +96,7 @@ function TransactionModal() {
 
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
-	}, [formData]);
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
