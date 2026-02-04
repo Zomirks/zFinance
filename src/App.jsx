@@ -7,6 +7,7 @@ import Footer from './components/layout/Footer';
 // Pages
 import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
+import NotFound from './pages/NotFound';
 
 function App() {
 	return (
@@ -17,6 +18,7 @@ function App() {
 				<Routes>
 					<Route path="/" element={<DashboardPage />} />
 					<Route path="/transactions" element={<TransactionsPage />} />
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</div>
 
