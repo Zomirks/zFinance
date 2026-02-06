@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 const Modal = ({ children, title, onClose }) => {
@@ -26,7 +27,7 @@ const Modal = ({ children, title, onClose }) => {
 		return () => window.removeEventListener('keydown', handleEscape);
 	}, [handleClose]);
 
-	return (
+	return createPortal(
 		<div
 			className="fixed inset-0 z-50 flex items-end xs:items-center justify-center"
 			role="dialog"
@@ -87,7 +88,8 @@ const Modal = ({ children, title, onClose }) => {
 					{children}
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body
 	);
 };
 
