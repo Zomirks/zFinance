@@ -11,8 +11,8 @@ import TransactionModal from '../components/features/TransactionModal';
 // Components - UI
 import { Card, Button } from '../components/ui';
 
-// Hooks
-import { useTransactions } from '../hooks/useTransactions';
+// Context
+import { useTransactions } from '../contexts/TransactionsContext';
 
 function TransactionsPage() {
 	const { transactions, loading, error, addTransaction, updateTransaction, deleteTransaction } = useTransactions();

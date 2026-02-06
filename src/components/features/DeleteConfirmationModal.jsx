@@ -1,9 +1,11 @@
 import { AlertTriangle } from 'lucide-react';
 
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { useCurrency } from '../../contexts/CurrencyContext';
+import { formatDate } from '../../utils/formatters';
 import { Button, Modal } from '../ui';
 
 const DeleteConfirmationModal = ({ transaction, onConfirm, onClose }) => {
+	const { formatAmount } = useCurrency();
 	if (!transaction) return null;
 
 	const { id, amount, description, date } = transaction;
@@ -32,7 +34,7 @@ const DeleteConfirmationModal = ({ transaction, onConfirm, onClose }) => {
 						<span>{formatDate(date, '', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
 						<span>•</span>
 						<span className={isIncome ? 'text-primary-600 dark:text-primary-400' : 'text-red-600 dark:text-red-400'}>
-							{isIncome ? '+' : ''}{formatCurrency(amount)}
+							{isIncome ? '+' : ''}{formatAmount(amount)}
 						</span>
 					</div>
 				</div>

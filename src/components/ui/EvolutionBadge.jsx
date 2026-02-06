@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { formatCurrency } from '../../utils/formatters';
+import { useCurrency } from '../../contexts/CurrencyContext';
 
 const EvolutionBadge = ({ evoPourcent, evoAmount, isBetter }) => {
+	const { formatAmount } = useCurrency();
 	const [showPourcentage, setShowPourcentage] = useState(true);
 
 	if (evoPourcent === 0 && evoAmount === 0) {
@@ -31,7 +32,7 @@ const EvolutionBadge = ({ evoPourcent, evoAmount, isBetter }) => {
 				{showPourcentage ? (
 					`${evoPourcent.toFixed(1)}%`
 				) : (
-					formatCurrency(evoAmount)
+					formatAmount(evoAmount)
 				)}
 			</span>
 			<span className="text-slate-950/60 dark:text-white/60 text-xs">vs mois dernier</span>

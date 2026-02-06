@@ -7,7 +7,7 @@ import { Button, Input, Modal, Select } from '../ui';
 // Icons
 import { Calendar1, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
-// Utils - formatters
+// Context
 import { useTransactions } from '../../contexts/TransactionsContext';
 
 const CATEGORIES = {

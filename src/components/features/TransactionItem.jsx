@@ -7,10 +7,14 @@ import { Badge, Button } from '../ui';
 // Icons
 import { Check, SquarePen, Trash2, MoreHorizontal } from 'lucide-react';
 
+// Context
+import { useCurrency } from '../../contexts/CurrencyContext';
+
 // Utils - Formatters
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatDate } from '../../utils/formatters';
 
 const TransactionItem = memo(function TransactionItem({ transaction, onEdit, onDelete, style }) {
+	const { formatAmount } = useCurrency();
 	const { amount, description, category, date, status } = transaction;
 	const isPending = status === 'pending';
 	const [showActions, setShowActions] = useState(false);
@@ -94,7 +98,7 @@ const TransactionItem = memo(function TransactionItem({ transaction, onEdit, onD
 							}
 						`}
 					>
-						{formatCurrency(Math.abs(amount))}
+						{formatAmount(Math.abs(amount))}
 					</p>
 				</div>
 

@@ -11,12 +11,10 @@ import { Button } from '../ui';
 
 // Context
 import { useTransactions } from '../../contexts/TransactionsContext';
+import { useCurrency } from '../../contexts/CurrencyContext';
 
 // Icons
 import { ArrowRight, ArrowRightLeft } from 'lucide-react';
-
-// Utils - Formatters
-import { formatCurrency } from '../../utils/formatters';
 
 const FILTER_BUTTONS = [
 	{ key: 'all', label: 'Toutes' },
@@ -25,6 +23,7 @@ const FILTER_BUTTONS = [
 ];
 
 const TransactionList = ({ transactions = [], limit = null }) => {
+	const { formatAmount } = useCurrency();
 	const [filter, setFilter] = useState('all');
 	const {
 		openForm,
@@ -54,8 +53,8 @@ const TransactionList = ({ transactions = [], limit = null }) => {
 	}, [filter, transactions, limit]);
 
 	const filteredTotal = useMemo(
-		() => formatCurrency(filtered.reduce((sum, t) => sum + (t?.amount ?? 0), 0)),
-		[filtered]
+		() => formatAmount(filtered.reduce((sum, t) => sum + (t?.amount ?? 0), 0)),
+		[filtered, formatAmount]
 	);
 
 	const handleConfirmDelete = async (id) => {

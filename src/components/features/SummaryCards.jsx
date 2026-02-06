@@ -1,17 +1,19 @@
 // Components - UI
 import { Card, EvolutionBadge } from '../ui';
 
-// Hooks
-import { useTransactions } from '../../hooks/useTransactions';
+// Context
+import { useTransactions } from '../../contexts/TransactionsContext';
+import { useCurrency } from '../../contexts/CurrencyContext';
 
 // Icons
 import { Wallet, BanknoteArrowDown, BanknoteArrowUpIcon } from 'lucide-react';
 
 // Utils - Formatters
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatDate } from '../../utils/formatters';
 
 const SummaryCards = () => {
 	const { stats } = useTransactions();
+	const { formatAmount } = useCurrency();
 	const balance = stats.balance;
 	const income = stats.income.currentMonth;
 	const expense = stats.expense.currentMonth;
@@ -77,7 +79,7 @@ const SummaryCards = () => {
 					</div>
 
 					<p className="text-3xl xs:text-4xl sm:text-5xl font-bold text-white">
-						{formatCurrency(balance)}
+						{formatAmount(balance)}
 					</p>
 				</div>
 			</div>
@@ -86,7 +88,7 @@ const SummaryCards = () => {
 				<Card title='Revenus du mois' className='col-span-2 xs:col-span-1' rightElement={incomeIcon}>
 					<div className="flex items-center justify-between flex-wrap gap-2">
 						<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-							{formatCurrency(income)}
+							{formatAmount(income)}
 						</p>
 						
 						<EvolutionBadge
@@ -100,7 +102,7 @@ const SummaryCards = () => {
 				<Card title='Dépenses du mois' className='col-span-2 xs:col-span-1' rightElement={expenseIcon}>
 					<div className="flex items-center justify-between flex-wrap gap-2">
 						<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-							{formatCurrency(expense)}
+							{formatAmount(expense)}
 						</p>
 
 						<EvolutionBadge
@@ -113,13 +115,13 @@ const SummaryCards = () => {
 
 				<Card title='Bilan mensuel'>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-						{formatCurrency(stats.currentMonthBalance)}
+						{formatAmount(stats.currentMonthBalance)}
 					</p>
 				</Card>
 
 				<Card title='Bilan mois précédent'>
 					<p className="text-xl xs:text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white">
-						{formatCurrency(stats.income.lastMonth - stats.expense.lastMonth)}
+						{formatAmount(stats.income.lastMonth - stats.expense.lastMonth)}
 					</p>
 				</Card>
 			</div>

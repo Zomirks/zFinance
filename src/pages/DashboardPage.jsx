@@ -7,8 +7,8 @@ import TransactionModal from '../components/features/TransactionModal';
 // Components - UI
 import { Card } from '../components/ui';
 
-// Hooks
-import { useTransactions } from '../hooks/useTransactions';
+// Context
+import { useTransactions } from '../contexts/TransactionsContext';
 
 // Variables
 const RECENT_TRANSACTIONS_LIMIT = 5;
